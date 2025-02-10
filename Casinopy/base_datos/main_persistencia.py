@@ -1,5 +1,5 @@
 import random
-from persistencia import Persistencia
+from persistencia import Persistencia # type: ignore
 from ...Casinopy.gestor_aplicacion.habitaciones.habitacion import Habitacion
 from ...Casinopy.gestor_aplicacion.usuarios.recepcionista import Recepcionista
 from ...Casinopy.gestor_aplicacion.usuarios.cliente import Cliente
