@@ -1,4 +1,6 @@
-from ..servicio.cuenta import Cuenta
+from ..Servicios.cuenta import Cuenta
+
+
 class Cliente:
     def __init__(self, nombre, identificacion, suscripcion):
         self.nombre = nombre
@@ -8,7 +10,8 @@ class Cliente:
         self.historial_reservas = []
 
     def agregar_reserva(self, habitacion, noches):
-        total = habitacion.precio_base * noches * (1 - self.suscripcion.descuento)
+        total = habitacion.precio_base * noches * \
+            (1 - self.suscripcion.descuento)
         detalle = f'Habitación {habitacion.numero} por {noches} noche(s). Total (con descuento): ${total}'
         self.historial_reservas.append(detalle)
         self.cuenta_total += total

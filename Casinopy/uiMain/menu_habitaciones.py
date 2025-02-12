@@ -1,5 +1,6 @@
-from ...Casinopy.gestor_aplicacion.habitaciones.habitacion import Habitacion
-from ...Casinopy.gestor_aplicacion.usuarios.suscripcion import Suscripcion
+from ...Casinopy.gestorAplicacion.habitaciones.habitacion import Habitacion
+from ...Casinopy.gestorAplicacion.personal.suscripcion import Suscripcion
+
 
 class MenuHabitaciones:
     def __init__(self, cliente):
@@ -9,9 +10,12 @@ class MenuHabitaciones:
 
     def crear_habitaciones(self):
         # Crear habitaciones de ejemplo
-        self.menu[0][0] = Habitacion(101, 100, "Estándar", "al mar", "Pequeña", True, False, 0.1, False)
-        self.menu[1][0] = Habitacion(102, 200, "Suite", "a la ciudad", "Grande", True, False, 0.2, False)
-        self.menu[2][0] = Habitacion(103, 500, "Presidencial", "al mar", "Grande", True, False, 0.3, False)
+        self.menu[0][0] = Habitacion(
+            101, 100, "Estándar", "al mar", "Pequeña", True, False, 0.1, False)
+        self.menu[1][0] = Habitacion(
+            102, 200, "Suite", "a la ciudad", "Grande", True, False, 0.2, False)
+        self.menu[2][0] = Habitacion(
+            103, 500, "Presidencial", "al mar", "Grande", True, False, 0.3, False)
 
     def mostrar_menu(self, cliente):
         tipos = ["Estándar", "Suite", "Presidencial"]
@@ -22,10 +26,12 @@ class MenuHabitaciones:
                 if self.menu[i][j] is not None:
                     habitacion = self.menu[i][j]
                     precio_con_descuento = habitacion.calcular_precio_con_descuento()
-                    print(f"{cliente.suscripcion.nivel}: {habitacion}, Precio (con descuento): ${precio_con_descuento}")
+                    print(
+                        f"{cliente.suscripcion.nivel}: {habitacion}, Precio (con descuento): ${precio_con_descuento}")
 
     def reservar_habitacion(self, cliente, suscripciones):
-        tipo = int(input("Seleccione el tipo de habitación (0 = Estándar, 1 = Suite, 2 = Presidencial): "))
+        tipo = int(input(
+            "Seleccione el tipo de habitación (0 = Estándar, 1 = Suite, 2 = Presidencial): "))
         habitacion_reservada = self.buscar_disponible(tipo, 0)
         if habitacion_reservada:
             habitacion_reservada.ocupada = True

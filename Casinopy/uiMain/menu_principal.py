@@ -1,9 +1,10 @@
 import random
 from menu_habitaciones import MenuHabitaciones
-from ...Casinopy.gestor_aplicacion.usuarios.suscripcion import Suscripcion
-from ...Casinopy.gestor_aplicacion.usuarios.recepcionista import Recepcionista
-from ...Casinopy.gestor_aplicacion.usuarios.cliente import Cliente
+from ...Casinopy.gestor_aplicacion.personal.suscripcion import Suscripcion
+from ...Casinopy.gestor_aplicacion.personal.recepcionista import Recepcionista
+from ...Casinopy.gestor_aplicacion.personal.cliente import Cliente
 from ...Casinopy.gestor_aplicacion.habitaciones.habitacion import Habitacion
+
 
 def main():
     # Simulación de datos iniciales
@@ -31,7 +32,8 @@ def main():
 
     # Inicio de sesión
     print("Bienvenido al sistema de gestión del hotel.")
-    id_recepcionista = input("Por favor, inicie sesión.\nIngrese su ID de recepcionista: ")
+    id_recepcionista = input(
+        "Por favor, inicie sesión.\nIngrese su ID de recepcionista: ")
 
     if id_recepcionista != recepcionista.id:
         print("ID incorrecto. Acceso denegado.")
@@ -85,7 +87,8 @@ def main():
                 print("No hay un cliente registrado. Cree un cliente primero.")
                 continue
 
-            tipo = int(input("Seleccione el tipo de habitación: 0 = Estándar, 1 = Suite, 2 = Presidencial: "))
+            tipo = int(input(
+                "Seleccione el tipo de habitación: 0 = Estándar, 1 = Suite, 2 = Presidencial: "))
             habitacion_reservada = menu_habitaciones.buscar_disponible(tipo, 0)
             if habitacion_reservada:
                 habitacion_reservada.ocupada = True
@@ -116,6 +119,7 @@ def main():
 
         else:
             print("Opción no válida. Intente nuevamente.")
+
 
 if __name__ == "__main__":
     main()

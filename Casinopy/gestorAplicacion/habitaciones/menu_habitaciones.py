@@ -2,12 +2,14 @@ import random
 from ..habitaciones.habitacion import Habitacion
 from ..usuarios.cliente import Cliente
 from ..usuarios.suscripcion import Suscripcion
-from ..servicio import Bar  # Asegúrate de que la clase Bar esté implementada
+from ..Servicios import Bar  # Asegúrate de que la clase Bar esté implementada
 from ..usuarios import Conserje, Bartender
+
 
 class MenuHabitaciones:
     def __init__(self, cliente, conserje, bartender):
-        self.menu = [[None for _ in range(3)] for _ in range(3)]  # 3 tipos de habitaciones, 3 habitaciones por tipo
+        # 3 tipos de habitaciones, 3 habitaciones por tipo
+        self.menu = [[None for _ in range(3)] for _ in range(3)]
         self.tipos = ["Estándar", "Suite", "Presidencial"]
         self.crear_habitaciones(cliente)
         self.cliente = cliente
@@ -17,14 +19,18 @@ class MenuHabitaciones:
     def crear_habitaciones(self, cliente):
         for i in range(len(self.menu)):
             for j in range(len(self.menu[i])):
-                numero = random.randint(1, 100)  # Número de habitación entre 1 y 100
-                precio_base = (i + 1) * 100  # Precio base por tipo de habitación
+                # Número de habitación entre 1 y 100
+                numero = random.randint(1, 100)
+                # Precio base por tipo de habitación
+                precio_base = (i + 1) * 100
                 tipo = self.tipos[i]
 
                 # Generar características aleatorias
                 vista = random.choice(["al mar", "a la ciudad"])
-                capacidad = random.choice(["Pequeña", "Grande"])  # Ejemplo de capacidades
-                servicio_habitacion = random.choice([True, False])  # Servicio a la habitación
+                # Ejemplo de capacidades
+                capacidad = random.choice(["Pequeña", "Grande"])
+                servicio_habitacion = random.choice(
+                    [True, False])  # Servicio a la habitación
                 sucia = False  # Estado de la habitación (limpia o sucia)
                 suscripcion_cliente = cliente.suscripcion
                 descuento = suscripcion_cliente.descuento
@@ -32,7 +38,7 @@ class MenuHabitaciones:
 
                 # Crear la habitación y agregarla a la matriz
                 self.menu[i][j] = Habitacion(numero, precio_base, tipo, vista, capacidad,
-                                              servicio_habitacion, sucia, descuento, ocupada)
+                                             servicio_habitacion, sucia, descuento, ocupada)
 
     def mostrar_menu(self, cliente):
         print("\n--- Menú de Habitaciones ---")
@@ -42,8 +48,10 @@ class MenuHabitaciones:
             for j in range(len(self.menu[i])):
                 if self.menu[i][j] is not None:
                     habitacion = self.menu[i][j]
-                    precio_con_descuento = habitacion.precio_base * (1 - descuento)  # Aplicar el descuento
-                    print(f"{cliente.suscripcion.nivel}: {habitacion}, Precio (con descuento): ${precio_con_descuento:.2f}")
+                    precio_con_descuento = habitacion.precio_base * \
+                        (1 - descuento)  # Aplicar el descuento
+                    print(
+                        f"{cliente.suscripcion.nivel}: {habitacion}, Precio (con descuento): ${precio_con_descuento:.2f}")
 
     def manejar_estadia(self, habitacion, noches_reservadas):
         for i in range(1, noches_reservadas + 1):
@@ -83,7 +91,8 @@ class MenuHabitaciones:
 
         # Obtener el nivel de suscripción del cliente
         nivel_suscripcion_string = cliente.suscripcion.nivel
-        tipo = int(input("Seleccione el tipo de habitación (0 = Estándar, 1 = Suite, 2 = Presidencial): "))
+        tipo = int(input(
+            "Seleccione el tipo de habitación (0 = Estándar, 1 = Suite, 2 = Presidencial): "))
 
         # Validar la selección
         if tipo < 0 or tipo >= len(self.menu):
@@ -95,10 +104,12 @@ class MenuHabitaciones:
         for j in range(len(self.menu[tipo])):
             if self.menu[tipo][j] is not None and not self.menu[tipo][j].ocupada:
                 habitacion = self.menu[tipo][j]
-                print(f"Número de habitación: {habitacion.numero}, {habitacion}")
+                print(
+                    f"Número de habitación: {habitacion.numero}, {habitacion}")
 
         # Preguntar por el número de habitación
-        numero_habitacion = int(input("Ingrese el número de la habitación que desea reservar: "))
+        numero_habitacion = int(
+            input("Ingrese el número de la habitación que desea reservar: "))
 
         # Buscar la habitación por número
         habitacion_reservada = None
@@ -111,8 +122,10 @@ class MenuHabitaciones:
             noches = int(input("Ingrese el número de noches a reservar: "))
             habitacion_reservada.ocupada = True
             cliente.agregar_reserva(habitacion_reservada, noches)
-            print(f"Reserva realizada exitosamente para la habitación: {habitacion_reservada}")
+            print(
+                f"Reserva realizada exitosamente para la habitación: {habitacion_reservada}")
 
             self.manejar_estadia(habitacion_reservada, noches)
         else:
-            print("No hay habitaciones disponibles para esta categoría o el número de habitación es incorrecto.")
+            print(
+                "No hay habitaciones disponibles para esta categoría o el número de habitación es incorrecto.")

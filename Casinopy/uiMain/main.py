@@ -1,11 +1,12 @@
 import random
 from .inicio_sesion import InicioSesion
-from gestor_aplicacion.habitaciones.menu_habitaciones import MenuHabitaciones
+from gestorAplicacion.habitaciones.menu_habitaciones import MenuHabitaciones
 from gestor_aplicacion.usuarios.suscripcion import Suscripcion
 from gestor_aplicacion.usuarios.recepcionista import Recepcionista
 from gestor_aplicacion.usuarios.cliente import Cliente
 from gestor_aplicacion.usuarios.conserje import Conserje
 from gestor_aplicacion.usuarios.bartender import Bartender
+
 
 def main():
     # Datos iniciales
@@ -43,6 +44,7 @@ def main():
     menu_habitaciones.mostrar_menu(cliente)
     menu_habitaciones.reservar_habitacion(cliente, SUSCRIPCIONES)
     cliente.mostrar_historial_reservas()
+
 
 if __name__ == "__main__":
     main()
