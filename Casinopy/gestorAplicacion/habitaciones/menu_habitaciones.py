@@ -1,5 +1,5 @@
 import random
-from ..habitaciones.habitacion import Habitacion
+from ..Servicios.habitacion import Habitacion
 from ..usuarios.cliente import Cliente
 from ..usuarios.suscripcion import Suscripcion
 from ..Servicios import Bar  # Asegúrate de que la clase Bar esté implementada

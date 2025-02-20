@@ -1,5 +1,5 @@
 from .base_datos.persistencia import Persistencia
-from .gestorAplicacion.habitaciones.habitacion import Habitacion
+from .gestorAplicacion.Servicios.habitacion import Habitacion
 from .gestorAplicacion.habitaciones.menu_habitaciones import MenuHabitaciones
 from .gestorAplicacion.Servicios.bar import Bar
 from .gestorAplicacion.Servicios.bebida import Bebida

@@ -12,7 +12,7 @@ class CasinoApp:
         self.root.grid_columnconfigure(0, weight=1)
         self.root.grid_columnconfigure(1, weight=1)
         self.root.grid_rowconfigure(0, weight=1)
-
+        
         # Menu
         menu_bar = Menu(root)
         inicio_menu = Menu(menu_bar, tearoff=0)
@@ -42,6 +42,16 @@ class CasinoApp:
         self.frame_p6 = Frame(self.frame_p2, bg="gray")
         self.frame_p6.pack(expand=True, fill=tk.BOTH)
 
+        self.dev_photo_labels = [[Label(self.frame_p6, bg="gray") for _ in range(2)] for _ in range(2)]
+
+        # Developer Photos (P6)
+        
+        for i in range(2):
+            for j in range(2):
+                self.dev_photo_labels[i][j].grid(row=i, column=j, padx=5, pady=5, sticky="nsew")
+                self.frame_p6.grid_columnconfigure(j, weight=1)
+                self.frame_p6.grid_rowconfigure(i, weight=1)
+
         # Welcome Label (P3)
         self.label_welcome = Label(self.frame_p3, text="Bienvenido al Casino", bg="blue", fg="white")
         self.label_welcome.pack(pady=10, expand=True)
@@ -57,22 +67,20 @@ class CasinoApp:
         self.label_bio.bind("<Button-1>", self.cycle_bio)
         self.update_bio()
 
-        # Developer Photos (P6)
-        self.dev_photo_labels = [[Label(self.frame_p6, bg="gray") for _ in range(2)] for _ in range(2)]
-        for i in range(2):
-            for j in range(2):
-                self.dev_photo_labels[i][j].grid(row=i, column=j, padx=5, pady=5, sticky="nsew")
-                self.frame_p6.grid_columnconfigure(j, weight=1)
-                self.frame_p6.grid_rowconfigure(i, weight=1)
+        self.base_image_path = os.path.join(os.path.dirname(__file__), "images")
 
-        # Images in P4 (cycling on hover)
-        self.p4_images = ["system1.png", "system2.png", "system3.png", "system4.png", "system5.png"]
-        self.current_p4_image_index = 0
-        self.p4_label = Label(self.frame_p4, bg="white")
-        self.p4_label.pack(expand=True, fill=tk.BOTH)
-        self.p4_label.bind("<Enter>", self.cycle_p4_image)
-        self.p4_photo = None  # Store reference
-        self.load_p4_image()
+        # Imagenes de P4
+        self.image_files = ["system1.png", "system2.png", "system3.png", "system4.png", "system5.png"]
+        self.image_paths = [os.path.join(self.base_image_path, img) for img in self.image_files]
+        self.current_image_index = 0
+
+        # Label P4 imagen    
+        self.image_label = tk.Label(self.frame_p4, bg="white")
+        self.image_label.pack(expand=True, fill="both")
+        self.cargar_imagen()
+        self.image_label.bind("<Enter>", self.cambiar_imagen)
+
+        
 
         # Button to enter the main window (P4)
         self.btn_enter = Button(self.frame_p4, text="Entrar al Casino", command=self.open_main_window)
@@ -81,6 +89,15 @@ class CasinoApp:
         # Ensure proper height after Tkinter initializes
         self.root.after(100, self.adjust_frames)
 
+
+    """ def cargar_foto_desarrollador(self, img_name):
+        img_path = os.path.join(self.base_image_path, img_name)
+        if not os.path.exists(img_path):
+            img_path = os.path.join(self.base_image_path, "default.png")
+        img = Image.open(img_path).resize((150, 150))
+        photo = ImageTk.PhotoImage(img)
+        self.dev_image_label.config(image=photo)
+        self.dev_image_label.image = photo """
     def adjust_frames(self):
         """Adjust subframe heights after root window initializes"""
         height = self.root.winfo_height()
@@ -102,15 +119,22 @@ class CasinoApp:
         """Loads and updates images in P6 dynamically"""
         dev_name = self.developers[self.current_dev_index].lower().replace(" ", "_")
         self.dev_photos = []  # Maintain reference list
+        self.base_image_path = os.path.join(os.path.dirname(__file__), "images")
         for i in range(2):
             for j in range(2):
-                img_path = f"images/{dev_name}_{i}{j}.png"
-                if os.path.exists(img_path):
+                img_path = os.path.join(self.base_image_path, f"{dev_name}_{i}{j}.png")
+
+                if not os.path.exists(img_path):
+                    img_path = os.path.join(self.base_image_path, "default.png")
+
+                try:
                     img = Image.open(img_path).resize((100, 100))
                     photo = ImageTk.PhotoImage(img)
-                    self.dev_photos.append(photo)  # Store reference
+                    self.dev_photos.append(photo)  # Store reference to prevent GC
                     self.dev_photo_labels[i][j].config(image=photo)
                     self.dev_photo_labels[i][j].image = photo
+                except Exception as e:
+                    print(f"Error loading image {img_path}: {e}")
 
     def show_description(self):
         """Displays system description in a new window"""
@@ -118,19 +142,21 @@ class CasinoApp:
         description_window.title("Descripción del Sistema")
         Label(description_window, text="Este sistema permite administrar un casino con varias funcionalidades.", wraplength=400, padx=20, pady=20).pack()
 
-    def cycle_p4_image(self, event=None):
-        """Cycles images in P4 on hover"""
-        self.current_p4_image_index = (self.current_p4_image_index + 1) % len(self.p4_images)
-        self.load_p4_image()
+    def cargar_imagen(self):
+        try:
+            img_path = self.image_paths[self.current_image_index]
+            print(img_path)
+            img = Image.open(img_path)
+            img = img.resize((150, 150))
+            self.photo = ImageTk.PhotoImage(img)
+            self.image_label.config(image=self.photo)
+            self.image_label.image = self.photo
+        except Exception as e:
+            print(f"Error cargando la imagen en P4: {e}")
 
-    def load_p4_image(self):
-        """Loads images dynamically for P4"""
-        img_path = f"images/{self.p4_images[self.current_p4_image_index]}"
-        if os.path.exists(img_path):
-            img = Image.open(img_path).resize((150, 150))
-            self.p4_photo = ImageTk.PhotoImage(img)  # Keep reference
-            self.p4_label.config(image=self.p4_photo)
-            self.p4_label.image = self.p4_photo
+    def cambiar_imagen(self, event=None):
+        self.current_image_index = (self.current_image_index + 1) % len(self.image_paths)
+        self.cargar_imagen()
 
     def open_main_window(self):
         """Opens the main casino window without closing the current one"""
