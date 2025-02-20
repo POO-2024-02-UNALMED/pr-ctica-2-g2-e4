@@ -4,7 +4,7 @@ from .conserje import Conserje
 from .empleado import Empleado
 from .persona import Persona
 from .recepcionista import Recepcionista
-from .suscripcion import Suscripcion
+from ..Servicios.suscripcion import Suscripcion
 
 __all__ = [
     'Bartender',

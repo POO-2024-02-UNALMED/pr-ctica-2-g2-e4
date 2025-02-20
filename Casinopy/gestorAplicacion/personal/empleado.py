@@ -1,13 +1,38 @@
+from gestorAplicacion.Servicios import Suscripcion
+from gestorAplicacion.personal import Cliente
+
 class Empleado:
-    def __init__(self, nombre, id):
-        self.nombre = nombre
-        self.id = id
+    empleados = []
+    
+    def __init__(self, rol: str, puesto: str):
+        self.rol = rol
+        self.puesto = puesto
+        Empleado.empleados.append(self)
+    
+    def compensar_fichas(self, suscripcion: Suscripcion, cliente: Cliente):
+        fichas_compensacion = suscripcion.get_ficha_compensacion()
+        cliente.set_fichas(cliente.get_fichas() + fichas_compensacion)
+    
+    def generar_saludo(self, nombre: str, rol: str) -> str:
+        return f"Hola, {nombre}, soy un {rol}."
 
-    def get_nombre(self):
-        return self.nombre
-
-    def get_id(self):
-        return self.id
-
-    def get_rol(self):
-        raise NotImplementedError("Subclasses must implement this method")
+    
+    def get_rol(self) -> str:
+        return self.rol
+    
+    def set_rol(self, rol: str):
+        self.rol = rol
+    
+    def get_puesto(self) -> str:
+        return self.puesto
+    
+    def set_puesto(self, puesto: str):
+        self.puesto = puesto
+    
+    @staticmethod
+    def get_empleados():
+        return Empleado.empleados
+    
+    @staticmethod
+    def set_empleados(empleados):
+        Empleado.empleados = empleados

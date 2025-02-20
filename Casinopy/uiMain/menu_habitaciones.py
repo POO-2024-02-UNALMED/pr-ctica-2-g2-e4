@@ -1,5 +1,5 @@
-from ...Casinopy.gestorAplicacion.habitaciones.habitacion import Habitacion
-from ...Casinopy.gestorAplicacion.personal.suscripcion import Suscripcion
+from ..gestorAplicacion.Servicios.habitacion import Habitacion
+from ..gestorAplicacion.Servicios.suscripcion import Suscripcion
 
 
 class MenuHabitaciones:
