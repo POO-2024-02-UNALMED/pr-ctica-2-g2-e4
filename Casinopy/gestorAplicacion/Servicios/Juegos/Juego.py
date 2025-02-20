@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import math
-from gestorAplicacion.personal import Cliente    # Importación adaptada
+from gestorAplicacion.personal.cliente import Cliente    # Importación adaptada
 from gestorAplicacion.personal import Animador   # desde paquete personal
 
 
