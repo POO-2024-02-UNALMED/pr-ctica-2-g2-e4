@@ -1,5 +1,5 @@
 from typing import List, Optional
-from gestorAplicacion.Servicios import Ingrediente
+from ..Servicios.Ingrediente import Ingrediente
 
 class Bebida:
     def __init__(self, nombre: str = "", precio: int = 0, dulce: bool = False, amargo: bool = False, 

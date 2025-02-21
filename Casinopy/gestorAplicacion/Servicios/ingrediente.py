@@ -1,4 +1,5 @@
-from gestorAplicacion.Servicios import Suscripcion  # Ensure the correct import path
+# Ensure the correct import path
+from ..Servicios.suscripcion import suscripcion
 
 class Ingrediente:
     def __init__(self, nombre: str, suscripcion: Suscripcion = None):

@@ -1,4 +1,4 @@
-class Suscripcion:
+class Suscripcion():
     def __init__(self, visitas: int = None, vetado: str = None):
         if visitas is not None:
             if visitas == 1:
