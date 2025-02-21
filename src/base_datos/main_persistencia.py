@@ -1,8 +1,9 @@
 import random
-from persistencia import Persistencia # type: ignore
-from ...Casinopy.gestor_aplicacion.habitaciones.habitacion import Habitacion
-from ...Casinopy.gestor_aplicacion.usuarios.recepcionista import Recepcionista
-from ...Casinopy.gestor_aplicacion.usuarios.cliente import Cliente
+from persistencia import Persistencia  # type: ignore
+from ...src.gestor_aplicacion.habitaciones.habitacion import Habitacion
+from ...src.gestor_aplicacion.usuarios.recepcionista import Recepcionista
+from ...src.gestor_aplicacion.usuarios.cliente import Cliente
+
 
 def main():
     try:
@@ -45,6 +46,7 @@ def main():
 
     except Exception as e:
         print(e)
+
 
 if __name__ == "__main__":
     main()
