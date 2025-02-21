@@ -1,7 +1,7 @@
-from gestorAplicacion.Servicios import Suscripcion, RegistroJuego
-from gestorAplicacion.personal.empleado import Empleado
-from gestorAplicacion.personal.cliente import Cliente
-
+from ..Servicios.RegistroJuego import RegistroJuego
+from ..Servicios.suscripcion import Suscripcion
+from ..personal.empleado import Empleado
+from ..personal.cliente import Cliente
 
 class Animador(Empleado):
     def __init__(self):

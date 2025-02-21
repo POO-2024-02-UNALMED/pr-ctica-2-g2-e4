@@ -1,7 +1,7 @@
 from gestorAplicacion.Servicios.asiento import Asiento, ZonaAsiento
 from gestorAplicacion.personal.cliente import Cliente
 
-class Evento:
+class Evento():
     eventos_disponibles = []  # Lista estática de eventos disponibles
 
     def __init__(self, nombre, descripcion, artista, precio):

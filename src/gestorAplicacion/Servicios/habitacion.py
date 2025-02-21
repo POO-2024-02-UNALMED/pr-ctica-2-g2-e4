@@ -1,6 +1,6 @@
 import pickle
 
-class Habitacion:
+class Habitacion():
     def __init__(self, numero, precio_base, tipo, vista, capacidad, servicio_habitacion, sucia, descuento, ocupada):
         self.numero = numero
         self.precio_base = precio_base
