@@ -1,7 +1,7 @@
 import random
 from gestorAplicacion.Servicios.RegistroJuego import RegistroJuego
-from gestorAplicacion.personal.animador import Animador
-from gestorAplicacion.personal.cliente import Cliente
+from gestorAplicacion.personal.animador import animador
+from gestorAplicacion.personal.cliente import cliente
 from gestorAplicacion.Servicios.Juegos.juego import Juego
 
 
