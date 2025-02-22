@@ -1,4 +1,4 @@
-class Cuenta:
+class Cuenta():
     def __init__(self):
         self.bebidas_pedidas = []
         self.total = 0.0

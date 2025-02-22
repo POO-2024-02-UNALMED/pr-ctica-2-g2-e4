@@ -1,4 +1,4 @@
-class RegistroJuego:
+class RegistroJuego():
     def __init__(self, fichasInicio=None):
         # Constructor sin parámetros
         if fichasInicio is None:

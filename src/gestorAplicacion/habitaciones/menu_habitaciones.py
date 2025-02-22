@@ -1,9 +1,9 @@
 import random
 from ..Servicios.habitacion import Habitacion
-from ..usuarios.cliente import Cliente
-from ..usuarios.suscripcion import Suscripcion
+from ..personal.cliente import Cliente
+from ..personal.suscripcion import Suscripcion
 from ..Servicios import Bar  # Asegúrate de que la clase Bar esté implementada
-from ..usuarios import Conserje, Bartender
+from ..personal import Conserje, Bartender
 
 
 class MenuHabitaciones:

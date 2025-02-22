@@ -1,9 +1,11 @@
-from gestorAplicacion.Servicios import Suscripcion  # Ensure the correct import path
+# Ensure the correct import path
+from .suscripcion import Suscripcion
 
-class Ingrediente:
-    def __init__(self, nombre: str, suscripcion: Suscripcion = None):
+
+class Ingrediente():
+    def __init__(self, nombre: str, suscrip: Suscripcion = None):
         self.nombre = nombre
-        self.calidad = suscripcion.get_calidad_ingredientes() if suscripcion else "alta"
+        self.calidad = suscrip.get_calidad_ingredientes() if suscrip else "alta"
 
     def get_nombre(self) -> str:
         return self.nombre

@@ -1,7 +1,7 @@
 from typing import List, Optional
-from gestorAplicacion.Servicios import Ingrediente
+from .ingrediente import Ingrediente
 
-class Bebida:
+class Bebida():
     def __init__(self, nombre: str = "", precio: int = 0, dulce: bool = False, amargo: bool = False, 
                  acido: bool = False, alcoholico: bool = False, favorito: int = 0, 
                  ingredientes: Optional[List[Ingrediente]] = None):

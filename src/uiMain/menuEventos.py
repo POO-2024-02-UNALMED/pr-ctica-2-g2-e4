@@ -1,5 +1,6 @@
-from gestorAplicacion.servicios import Evento, Asiento
-from gestorAplicacion.personal import Cliente, Recepcionista
+from ..gestorAplicacion.Servicios import evento
+from ..gestorAplicacion.Servicios import asiento
+from ..gestorAplicacion.personal import Cliente, Recepcionista
 from ui_main import EventosUIConsole
 
 class EventoMain:
@@ -22,14 +23,14 @@ class EventoMain:
                 print("Como miembro Platinum, se le ha asignado automáticamente un asiento en Primera Fila.")
                 print("Además, recibirá una bebida especial gratuita durante el espectáculo.")
 
-            Evento.inicializar_eventos()
+            evento.inicializar_eventos()
             print("\n------------------------------- EVENTOS -------------------------------")
-            Evento.mostrar_eventos()
+            evento.mostrar_eventos()
             print("-----------------------------------------------------------------------")
 
             print("\nSeleccione un evento ingresando el número correspondiente:")
             opcion_evento = consola.pedir_evento()
-            evento_seleccionado = Evento.get_evento_por_indice(opcion_evento)
+            evento_seleccionado = evento.get_evento_por_indice(opcion_evento)
 
             # Aplicar descuento
             descuento = cliente.get_suscripcion().get_descuento()
@@ -48,7 +49,7 @@ class EventoMain:
             evento_seleccionado.inicializar_asientos()
 
             if cliente.get_suscripcion().get_tipo_suscripcion().lower() == "platinum":
-                zona_seleccionada = Asiento.ZonaAsiento.PALCO
+                zona_seleccionada = asiento.ZonaAsiento.PALCO
             else:
                 print("\nAquí tienes los asientos disponibles:\n")
                 evento_seleccionado.mostrar_zonas_asientos()
