@@ -1,5 +1,4 @@
 from gestorAplicacion.Servicios import RegistroJuego
-from gestorAplicacion.Servicios.Juegos import Blackjack, Ruleta, Craps, Slots
 from gestorAplicacion.personal import Animador, Cliente
 
 
