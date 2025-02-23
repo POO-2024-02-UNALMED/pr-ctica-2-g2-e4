@@ -1,8 +1,6 @@
 import random
-from gestorAplicacion.Servicios.RegistroJuego import RegistroJuego
-from gestorAplicacion.personal.animador import animador
-from gestorAplicacion.personal.cliente import cliente
-from gestorAplicacion.Servicios.Juegos.juego import Juego
+from ..RegistroJuego import RegistroJuego
+from .Juego import Juego
 
 
 class Blackjack(Juego):

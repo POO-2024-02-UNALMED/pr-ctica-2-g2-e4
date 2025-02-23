@@ -1,9 +1,9 @@
 import random
-from menu_habitaciones import MenuHabitaciones
-from ...src.gestor_aplicacion.personal.suscripcion import Suscripcion
-from ...src.gestor_aplicacion.personal.recepcionista import Recepcionista
-from ...src.gestor_aplicacion.personal.cliente import Cliente
-from ...src.gestor_aplicacion.habitaciones.habitacion import Habitacion
+from .menu_habitaciones import MenuHabitaciones
+from ..gestorAplicacion.habitaciones.menu_habitaciones import MenuHabitaciones
+from ..gestorAplicacion.Servicios.suscripcion import Suscripcion
+from ..gestorAplicacion.personal.recepcionista import Recepcionista
+from ..gestorAplicacion.personal.cliente import Cliente
 
 
 def main():

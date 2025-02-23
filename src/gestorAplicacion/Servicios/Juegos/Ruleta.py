@@ -1,6 +1,5 @@
-from gestorAplicacion.Servicios import RegistroJuego
-from gestorAplicacion.personal import Animador, Cliente
-from .juego import Juego
+from ..RegistroJuego import RegistroJuego
+from .Juego import Juego
 import random
 
 

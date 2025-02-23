@@ -1,5 +1,9 @@
-from gestorAplicacion.Servicios import RegistroJuego
-from gestorAplicacion.personal import Animador, Cliente
+
+from ..gestorAplicacion.personal.animador import Animador
+from ..gestorAplicacion.Servicios.Juegos.Blackjack import Blackjack
+from ..gestorAplicacion.Servicios.Juegos.Craps import Craps
+from ..gestorAplicacion.Servicios.Juegos.Ruleta import Ruleta
+from ..gestorAplicacion.Servicios.Juegos.Slots import Slots
 
 
 class MainJuegos:

@@ -1,4 +1,5 @@
-from gestorAplicacion.personal.empleado import Empleado
+from ..personal.empleado import Empleado
+
 
 class Artista(Empleado):
     def __init__(self, nombre: str, tipo_espectaculo: str = "General", rol: str = "Artista", puesto: str = "Escenario"):
