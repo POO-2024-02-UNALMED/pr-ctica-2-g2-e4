@@ -2,9 +2,9 @@ import os
 import tkinter as tk
 from tkinter import Menu, Label, Button, Frame, Toplevel
 from PIL import Image, ImageTk
-import os
+import ventana_principal #NO es un error, funciona correctamente
 
-class CasinoApp:
+class Ventana_Inicio:
     def __init__(self, root):
         self.root = root
         self.root.title("Casino - Ventana de Inicio")
@@ -159,13 +159,13 @@ class CasinoApp:
         self.cargar_imagen()
 
     def open_main_window(self):
-        """Opens the main casino window without closing the current one"""
-        new_window = Toplevel(self.root)
-        new_window.title("Ventana Principal del Casino")
-        Label(new_window, text="Bienvenido a la Ventana Principal del Casino", font=("Arial", 16)).pack(pady=20)
-        new_window.geometry("800x600")
+        """Closes the current window and opens Ventana_Principal"""
+        self.root.destroy()  # Close Ventana_Inicio
+        root = tk.Tk()  # Create new root
+        ventana_principal.Ventana_Principal(root)  # Open Ventana_Principal
+        root.mainloop()
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = CasinoApp(root)
+    app = Ventana_Inicio(root)
     root.mainloop()
