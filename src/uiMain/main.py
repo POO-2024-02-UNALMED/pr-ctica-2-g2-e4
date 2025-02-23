@@ -1,11 +1,11 @@
 import random
 from .inicio_sesion import InicioSesion
-from gestorAplicacion.habitaciones.menu_habitaciones import MenuHabitaciones
-from gestor_aplicacion.usuarios.suscripcion import Suscripcion
-from gestor_aplicacion.usuarios.recepcionista import Recepcionista
-from gestor_aplicacion.usuarios.cliente import Cliente
-from gestor_aplicacion.usuarios.conserje import Conserje
-from gestor_aplicacion.usuarios.bartender import Bartender
+from .menu_habitaciones import MenuHabitaciones
+from ..gestorAplicacion.Servicios.suscripcion import Suscripcion
+from ..gestorAplicacion.personal import Recepcionista
+from ..gestorAplicacion.personal.cliente import Cliente
+from ..gestorAplicacion.personal import Conserje
+from ..gestorAplicacion.personal.bartender import Bartender
 
 
 def main():

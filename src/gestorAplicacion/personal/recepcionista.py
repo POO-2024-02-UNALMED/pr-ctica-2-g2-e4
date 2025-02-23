@@ -1,6 +1,7 @@
-from gestorAplicacion.Servicios import Asiento, Auto, Evento, Suscripcion
-from gestorAplicacion.personal import Cliente, Empleado
+from ..Servicios import Asiento, Auto, Evento, Suscripcion
+from ..personal import Cliente, Empleado
 from typing import List
+
 
 class Recepcionista(Empleado):
     clientes: List[Cliente] = []
@@ -10,20 +11,22 @@ class Recepcionista(Empleado):
 
     def registrar_cliente(self, edad: int, saldo: float, identificacion: int, nombre: str, auto: Auto) -> Cliente:
         numero_visitas = 1
-        
+
         for cliente in Recepcionista.clientes:
             if cliente.get_id() == identificacion:
                 cliente.set_numero_visitas(cliente.get_numero_visitas() + 1)
                 cliente.set_auto(auto)
                 cliente.set_saldo(saldo)
-                cliente.set_suscripcion(Suscripcion(cliente.get_numero_visitas()))
+                cliente.set_suscripcion(
+                    Suscripcion(cliente.get_numero_visitas()))
                 return cliente
-        
+
         if edad < 18:
             print("No es mayor de edad, no puede entrar al casino")
             return None
-        
-        cliente_nuevo = Cliente(nombre, edad, identificacion, saldo, auto, Suscripcion(numero_visitas))
+
+        cliente_nuevo = Cliente(
+            nombre, edad, identificacion, saldo, auto, Suscripcion(numero_visitas))
         Recepcionista.clientes.append(cliente_nuevo)
         return cliente_nuevo
 
@@ -51,10 +54,12 @@ class Recepcionista(Empleado):
     def procesar_seleccion_evento(cliente: Cliente, evento_seleccionado: Evento, ubicacion: Asiento.ZonaAsiento, costo_con_descuento: int):
         print("\n--Resumen de la reserva--\n")
         print(f"Ha seleccionado el evento: {evento_seleccionado.get_nombre()}")
-        print(f"Artista invitado: {evento_seleccionado.get_artista().get_nombre()}")
+        print(
+            f"Artista invitado: {evento_seleccionado.get_artista().get_nombre()}")
         print(f"En la ubicación: {ubicacion}")
         print(f"El precio del evento fue de {costo_con_descuento} fichas.")
         print("Gracias por visitar el área de eventos. ¡Disfrute del espectáculo!")
-        
+
         if cliente.get_suscripcion().get_tipo_suscripcion().lower() == "platinum":
-            print("Como miembro Platinum, también recibirá una bebida especial durante el espectáculo.")
+            print(
+                "Como miembro Platinum, también recibirá una bebida especial durante el espectáculo.")

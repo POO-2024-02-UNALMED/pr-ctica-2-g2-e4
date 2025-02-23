@@ -1,8 +1,5 @@
-from ..Servicios.asiento import Asiento
-from ..Servicios.asiento import ZonaAsiento
-
-from ..personal.cliente import Cliente
-from ..personal.artista import Artista
+from .asiento import Asiento
+from ..personal import Artista
 
 
 class Evento():
@@ -32,9 +29,12 @@ class Evento():
         artista2 = Artista("Merrit McKinney")
         artista3 = Artista("Franco Escamilla")
 
-        cls.eventos_disponibles.append(Evento("Concierto de Jazz", "Jazz relajante.", artista1, 25))
-        cls.eventos_disponibles.append(Evento("Show de Magia", "Acto de Ilusionismo.", artista2, 35))
-        cls.eventos_disponibles.append(Evento("Comedia Stand-Up", "Una noche llena de risas.", artista3, 30))
+        cls.eventos_disponibles.append(
+            Evento("Concierto de Jazz", "Jazz relajante.", artista1, 25))
+        cls.eventos_disponibles.append(
+            Evento("Show de Magia", "Acto de Ilusionismo.", artista2, 35))
+        cls.eventos_disponibles.append(
+            Evento("Comedia Stand-Up", "Una noche llena de risas.", artista3, 30))
 
     @classmethod
     def mostrar_eventos(cls):
@@ -42,10 +42,11 @@ class Evento():
         if not cls.eventos_disponibles:
             print("No hay eventos disponibles en este momento")
             return
-        
+
         for i, evento in enumerate(cls.eventos_disponibles, start=1):
             nombre_artista = evento.artista.nombre if evento.artista else "Artista no disponible"
-            print(f"{i}. {evento.nombre} - {evento.descripcion} | Artista: {nombre_artista} (${evento.precio})")
+            print(
+                f"{i}. {evento.nombre} - {evento.descripcion} | Artista: {nombre_artista} (${evento.precio})")
 
     def mostrar_zonas_asientos(self):
         """Muestra las zonas de asientos disponibles en el evento."""
@@ -77,7 +78,8 @@ class Evento():
     def verificar_consumo_obligatorio(cliente):
         """Verifica si el cliente debe hacer un consumo mínimo antes del evento."""
         if cliente.suscripcion.tipo_suscripcion.lower() == "primera vez":
-            print("\nComo cliente 'Primera vez', deberá realizar un consumo mínimo en el bar antes del evento.")
+            print(
+                "\nComo cliente 'Primera vez', deberá realizar un consumo mínimo en el bar antes del evento.")
 
     def calcular_precio_zona(self, zona):
         """Calcula el precio del evento dependiendo de la zona del asiento."""

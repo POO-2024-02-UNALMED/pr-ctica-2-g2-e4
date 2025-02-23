@@ -1,7 +1,5 @@
-from ..Servicios.RegistroJuego import RegistroJuego
-from ..Servicios.suscripcion import Suscripcion
 from ..personal.empleado import Empleado
-from ..personal.cliente import Cliente
+
 
 class Animador(Empleado):
     def __init__(self):
@@ -54,10 +52,3 @@ class Animador(Empleado):
                   "Has jugado más de 10 partidas y tienes un 100% de victorias.")
             cliente.getSuscripcion().setTipoSuscripcion("Vetado")
             print("Tu suscripción ahora es 'Vetado'.")
-
-    # Métodos comentados del original
-    # def entregarPremio(self, partidaGanada, premioEspecial):
-    #     pass
-
-    # def pedirBebida(self, bebidaFavorita, suscripcion, Bebidas):
-    #     pass

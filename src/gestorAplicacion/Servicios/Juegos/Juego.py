@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 import math
-from gestorAplicacion.personal.cliente import Cliente    # Importación adaptada
-from gestorAplicacion.personal import Animador   # desde paquete personal
 
 
 class Juego(ABC):
@@ -14,7 +12,7 @@ class Juego(ABC):
         self.apuesta = apuesta
         self.__riesgo = riesgo
 
-    # Getters y Setters (se mantienen como en Java)
+    # Getters y Setters
     def getApuesta(self):
         return self.apuesta
 
