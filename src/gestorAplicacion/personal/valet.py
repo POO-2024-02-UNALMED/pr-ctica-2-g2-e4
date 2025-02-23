@@ -1,4 +1,4 @@
-from ..Servicios import Auto
+from ..Servicios.auto import Auto
 from ..personal import Empleado, Recepcionista
 
 

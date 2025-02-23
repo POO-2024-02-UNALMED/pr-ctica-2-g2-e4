@@ -1,5 +1,6 @@
 import random
-from .menu_habitaciones import MenuHabitaciones
+from ..gestorAplicacion.habitaciones.menu_habitaciones import MenuHabitaciones
+from ..gestorAplicacion.Servicios.habitacion import Habitacion
 from ..gestorAplicacion.habitaciones.menu_habitaciones import MenuHabitaciones
 from ..gestorAplicacion.Servicios.suscripcion import Suscripcion
 from ..gestorAplicacion.personal.recepcionista import Recepcionista

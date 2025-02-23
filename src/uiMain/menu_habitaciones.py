@@ -1,5 +1,4 @@
 from ..gestorAplicacion.Servicios.habitacion import Habitacion
-from ..gestorAplicacion.Servicios.suscripcion import Suscripcion
 
 
 class MenuHabitaciones:
