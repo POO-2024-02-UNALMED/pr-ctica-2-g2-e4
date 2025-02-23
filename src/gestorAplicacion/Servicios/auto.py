@@ -1,5 +1,5 @@
-from gestorAplicacion.Servicios import Bebida, Cuenta, Ingrediente, Suscripcion
-from gestorAplicacion.personal import Empleado, Cliente
+from ..personal.cliente import Cliente
+
 from typing import List, Optional
 
 class Auto:

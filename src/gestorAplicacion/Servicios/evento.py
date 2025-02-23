@@ -1,5 +1,9 @@
-from gestorAplicacion.Servicios.asiento import Asiento, ZonaAsiento
-from gestorAplicacion.personal.cliente import Cliente
+from ..Servicios.asiento import Asiento
+from ..Servicios.asiento import ZonaAsiento
+
+from ..personal.cliente import Cliente
+from ..personal.artista import Artista
+
 
 class Evento():
     eventos_disponibles = []  # Lista estática de eventos disponibles
