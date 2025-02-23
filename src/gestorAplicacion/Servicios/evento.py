@@ -1,4 +1,4 @@
-from .asiento import Asiento
+from .asiento import Asiento, ZonaAsiento
 from ..personal import Artista
 
 

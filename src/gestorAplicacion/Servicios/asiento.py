@@ -12,29 +12,43 @@ class Asiento:
         self.cantidad = cantidad
         self.precio = precio
         self.reservado = False  # Inicialmente no está reservado
-        self.numero = None  # Número del asiento (opcional)
+        self.numero = None 
 
-    # Métodos para reservar y liberar asientos
-    def reservar_asiento(self):
-        """Reserva el asiento si está disponible."""
-        if not self.reservado:
-            self.reservado = True
-            return True
-        else:
-            print("El asiento ya está reservado.")
-            return False
+    @staticmethod
+    def seleccionar_asiento(cliente, evento_seleccionado):
+        """
+        Método para seleccionar el asiento del cliente según su suscripción.
+        """
+        tipo_suscripcion = cliente.get_suscripcion().get_tipo_suscripcion().lower()
 
-    def liberar_asiento(self):
-        """Libera el asiento si está reservado."""
-        if self.reservado:
-            self.reservado = False
-            print("El asiento ha sido liberado.")
-        else:
-            print("El asiento ya se encontraba disponible.")
+        if tipo_suscripcion == "platinum":
+            print("Como miembro Platinum, se le ha asignado automáticamente un asiento en Primera Fila.")
+            print("Además, recibirá una bebida especial gratuita durante el espectáculo.")
+            return Asiento.ZonaAsiento.PALCO
 
-    def es_disponible(self):
-        """Verifica si el asiento está disponible."""
-        return not self.reservado
+        print("\nAquí tienes los asientos disponibles:\n")
+        evento_seleccionado.mostrar_zonas_asientos()
+
+        print("Seleccione una zona de asiento: ")
+        print("1. PALCO\n2. BALCÓN\n3. CENTRO\n4. ATRÁS")
+
+        zonas = {
+            1: Asiento.ZonaAsiento.PALCO,
+            2: Asiento.ZonaAsiento.BALCON,
+            3: Asiento.ZonaAsiento.CENTRO,
+            4: Asiento.ZonaAsiento.ATRAS
+        }
+
+        while True:
+            try:
+                opcion = int(input("Ingrese el número de la zona deseada: "))
+                if opcion in zonas:
+                    return zonas[opcion]
+                else:
+                    print("Opción inválida. Intente nuevamente.")
+            except ValueError:
+                print("Por favor, ingrese un número válido.")
+
 
     # Getters y setters con propiedades
     @property

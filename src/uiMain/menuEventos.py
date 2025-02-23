@@ -15,12 +15,10 @@ class EventoMain:
         if cliente:
             print("\n--------------------- DATOS USUARIO ---------------------")
             print(f"Hola {cliente.get_nombre_cliente()}!")
-            print(f"Su suscripción actual es: {cliente.get_suscripcion().get_tipo_suscripcion()}")
-            print(f"Su saldo actual es: {cliente.get_fichas()}")
 
-            if cliente.get_suscripcion().get_tipo_suscripcion().lower() == "platinum":
-                print("Como miembro Platinum, se le ha asignado automáticamente un asiento en Primera Fila.")
-                print("Además, recibirá una bebida especial gratuita durante el espectáculo.")
+            tipo_suscripcion = cliente.get_suscripcion().get_tipo_suscripcion().lower()
+            print(f"Su suscripción actual es: {tipo_suscripcion.capitalize()}")
+            print(f"Su saldo actual es: {cliente.get_fichas()}")
 
             evento.inicializar_eventos()
             print("\n------------------------------- EVENTOS -------------------------------")
@@ -42,36 +40,24 @@ class EventoMain:
 
             print("-------- Descuento por suscripción --------")
             print(f"El costo original del evento \"{evento_seleccionado.get_nombre()}\" es de {costo_original} fichas.")
-            print(f"Como miembro \"{cliente.get_suscripcion().get_tipo_suscripcion()}\", recibe un descuento del {descuento * 100}%.")
+            print(f"Como miembro \"{tipo_suscripcion.capitalize()}\", recibe un descuento del {descuento * 100}%.")
             print(f"El costo final con descuento es de {costo_con_descuento} fichas.")
-            cliente.set_fichas(cliente.get_fichas() - costo_con_descuento)
-            print(f"Su nuevo saldo es: {cliente.get_fichas()}\n")
             print("----------------------------------")
 
-            # Inicialización de asientos
-            evento_seleccionado.inicializar_asientos()
+            # Verificar si el cliente tiene suficientes fichas
+            if cliente.get_fichas() < costo_con_descuento:
+                print("No tiene suficientes fichas para pagar este evento.")
+                print("Por favor, recargue su saldo antes de intentar comprar un boleto.")
+                return  
 
-            if cliente.get_suscripcion().get_tipo_suscripcion().lower() == "platinum":
-                zona_seleccionada = asiento.ZonaAsiento.PALCO
-            else:
-                print("\nAquí tienes los asientos disponibles:\n")
-                evento_seleccionado.mostrar_zonas_asientos()
+            # Restar fichas si tiene saldo suficiente
+            cliente.set_fichas(cliente.get_fichas() - costo_con_descuento)
+            print(f"Pago exitoso. Su nuevo saldo es: {cliente.get_fichas()} fichas.\n")
 
-                print("Seleccione una zona de asiento: ")
-                print("1. PALCO\n2. BALCÓN\n3. CENTRO\n4. ATRÁS")
-                while True:
-                    try:
-                        opcion = int(input("Ingrese el número de la zona deseada: "))
-                        zonas = {1: asiento.ZonaAsiento.PALCO, 2: asiento.ZonaAsiento.BALCON,
-                                 3: asiento.ZonaAsiento.CENTRO, 4: asiento.ZonaAsiento.ATRAS}
-                        if opcion in zonas:
-                            zona_seleccionada = zonas[opcion]
-                            break
-                        else:
-                            print("Opción inválida. Intente nuevamente.")
-                    except ValueError:
-                        print("Por favor, ingrese un número válido.")
+            # Seleccionar asiento (asiento)
+            zona_seleccionada = asiento.seleccionar_asiento(cliente, evento_seleccionado)
 
+            # Procesar evento
             Recepcionista.procesar_seleccion_evento(cliente, evento_seleccionado, zona_seleccionada, costo_con_descuento)
 
         else:
