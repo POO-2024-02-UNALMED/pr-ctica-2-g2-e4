@@ -22,7 +22,6 @@ class FieldFrame(Frame):
         self.criterios = criterios
         self.valores_vars = []  # List of StringVar for each Entry field
         self.entries = []  # List of Entry widgets
-        self.on_get_values = on_get_values  # Callback function for button
 
         # Titles for the columns
         Label(self, text=titulo_criterios, bg="gray", fg="white", font=("Arial", 12, "bold")).grid(row=0, column=0, padx=10, pady=5)
@@ -50,7 +49,6 @@ class FieldFrame(Frame):
 
         # Add action buttons
         Button(self, text="Limpiar", command=self.limpiar_entradas, font=("Arial", 10)).grid(row=len(criterios) + 1, column=0, padx=10, pady=5, sticky="w")
-        Button(self, text="Obtener Valores", command=self._handle_get_values, font=("Arial", 10)).grid(row=len(criterios) + 1, column=1, padx=10, pady=5, sticky="w")
 
     def limpiar_entradas(self):
         """ Clears all input fields. """
@@ -60,14 +58,6 @@ class FieldFrame(Frame):
     def obtener_valores(self):
         """ Returns the values entered by the user as a list. """
         return [var.get() for var in self.valores_vars]
-
-    def _handle_get_values(self):
-        """ Internal method to handle 'Get Values' button click. """
-        valores = self.obtener_valores()
-        if self.on_get_values:
-            self.on_get_values(valores)  # Calls the user-defined function if provided
-        else:
-            print("Valores ingresados:", valores)  # Default action: Print values to console
 
     def obtener_valor_por_criterio(self, criterio):
         """

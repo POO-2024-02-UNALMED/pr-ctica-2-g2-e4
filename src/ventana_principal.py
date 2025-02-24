@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import Menu, Frame, Label, Button, messagebox
+import random 
 from fieldFrame import FieldFrame  # Importing FieldFrame for structured forms
 import ventana_inicio  # Importing Ventana_Inicio to allow navigation
 from gestorAplicacion.personal.cliente import Cliente
@@ -68,24 +69,196 @@ class Ventana_Principal:
         Label(self.frame_main, text="Consulta y administra información sobre el casino y sus funcionalidades.", font=("Arial", 12), bg="white").pack(pady=5)
 
     # 🔹 FUNCIONALIDAD 1: RECEPCIÓN
+    #interaccion 1
     def func_recepcion(self):
-        """ Handles Recepción functionality and unlocks the other functionalities """
+        """ Handles Recepción functionality (Step 1: Client Identification & Parking) """
         for widget in self.frame_main.winfo_children():
             widget.destroy()
 
-        criterios = ["ID Cliente", "Nombre", "Apellido", "Habitación"]
+        Label(self.frame_main, text="Recepción - Identificación y Estacionamiento", font=("Arial", 14, "bold"), bg="white").pack(pady=10)
+
+        # 🔹 Step 1: Client ID, Car Model, and Plate
+        criterios = ["ID Cliente", "Modelo Auto", "Placa Auto"]
+        valores = ["", "", ""]
+        habilitados = [True, True, True]  # All fields editable
+
+        self.field_identificacion = FieldFrame(self.frame_main, "Criterio", criterios, "Valor", valores, habilitados)
+        self.field_identificacion.pack(pady=10)
+
+        # Label to display parking lot visualization (added above the next input fields)
+        self.label_parking_display = Label(self.frame_main, text="", font=("Courier", 12), bg="white", justify="left")
+        self.label_parking_display.pack(pady=5)
+
+        self.label_feedback = Label(self.frame_main, text="", font=("Arial", 12), bg="white")
+        self.label_feedback.pack(pady=5)
+
+        Button(self.frame_main, text="Verificar ID y Mostrar Estacionamiento", command=self.verify_id_and_show_parking).pack(pady=5)
+
+        # Initializing objects
+        self.valet = Valet("Valet", "Estacionamiento")
+        self.recepcionista = Recepcionista("Recepcionista", "Recepción")
+        self.bartender = Bartender("Bartender", "Barra")
+        self.usuarioOld = None
+        self.parked_car = None
+
+    def verify_id_and_show_parking(self):
+        """ Checks ID, registers a new user if necessary, and displays the parking lot """
+        id_cliente = self.field_identificacion.obtener_valor_por_criterio("ID Cliente")
+        modelo = self.field_identificacion.obtener_valor_por_criterio("Modelo Auto")
+        placa = self.field_identificacion.obtener_valor_por_criterio("Placa Auto")
+
+        if not id_cliente or not modelo or not placa:
+            messagebox.showerror("Error", "Ingrese un ID, modelo de auto y placa válidos.")
+            return
+
+        self.usuarioOld = self.valet.identificar_cliente(id_cliente)
+
+        if self.usuarioOld:
+            self.label_feedback.config(text=f"Hola {self.usuarioOld.get_nombre_cliente()}! Bienvenido al casino.")
+            suscripcion_cliente = self.usuarioOld.get_suscripcion()
+        else:
+            self.label_feedback.config(text="No hay registros. Continuando con nuevo registro...")
+            suscripcion_cliente = None
+
+        # 🔹 Step 2: Initialize and Show Parking Lot
+        Casino.inicializar_estacionamiento(5, 5)  # Initializes a 5x5 parking lot
+        estacionamiento_str = Casino.mostrar_espacios_estacionamiento(suscripcion_cliente)
+
+        # 🔹 Update the GUI with the parking lot visualization
+        self.label_parking_display.config(text=estacionamiento_str)
+
+        # Move to next step: Ask for parking position
+        self.ask_parking_position()
+
+    def ask_parking_position(self):
+        """ Displays fields for selecting a parking space """
+        # Clear previous widgets (except parking display)
+        for widget in self.frame_main.winfo_children():
+            if widget not in [self.label_parking_display, self.label_feedback]:
+                widget.destroy()
+
+        Label(self.frame_main, text="Seleccione la ubicación de estacionamiento", font=("Arial", 14, "bold"), bg="white").pack(pady=10)
+
+        criterios = ["Columna Estacionamiento", "Fila Estacionamiento"]
+        valores = ["", ""]
+        habilitados = [True, True]
+
+        self.field_parking = FieldFrame(self.frame_main, "Criterio", criterios, "Valor", valores, habilitados)
+        self.field_parking.pack(pady=10)
+
+        Button(self.frame_main, text="Estacionar Auto", command=self.park_car).pack(pady=5)
+
+    def park_car(self):
+        """ Registers the car in the selected parking spot, but validation is now handled in Valet """
+        columna = self.field_parking.obtener_valor_por_criterio("Columna Estacionamiento")
+        fila = self.field_parking.obtener_valor_por_criterio("Fila Estacionamiento")
+
+        if not columna or not fila:
+            messagebox.showerror("Error", "Seleccione una columna y fila válidas para estacionar.")
+            return
+
+        id_cliente = self.field_identificacion.obtener_valor_por_criterio("ID Cliente")
+        modelo = self.field_identificacion.obtener_valor_por_criterio("Modelo Auto")
+        placa = self.field_identificacion.obtener_valor_por_criterio("Placa Auto")
+
+        # Convert input values to integers
+        columna, fila = int(columna), int(fila)
+
+        # 🔹 Step 1: Call `estacionar_registrar_auto()`, which now handles all validation
+        self.parked_car = self.valet.estacionar_registrar_auto(modelo, placa, columna, fila, id_cliente)
+
+        if self.parked_car:
+            messagebox.showinfo("Estacionamiento Exitoso", f"Auto {modelo} con placa {placa} estacionado en [{columna}, {fila}]")
+            self.register_client()  # Proceed to the next step
+        else:
+            messagebox.showwarning("Acceso Denegado", "No se pudo estacionar el auto. Revise las restricciones y espacios disponibles.")
+
+
+
+
+    #interaccion 2
+    def register_client(self):
+        """ Handles client registration and moves to ficha exchange """
+        for widget in self.frame_main.winfo_children():
+            widget.destroy()
+
+        Label(self.frame_main, text="Registro de Cliente", font=("Arial", 14, "bold"), bg="white").pack(pady=10)
+
+        criterios = ["Nombre", "Edad", "Saldo", "Cantidad a Convertir en Fichas"]
         valores = ["", "", "", ""]
-        habilitados = [True, True, True, True]  # All fields editable
+        habilitados = [True, True, True, True]
 
-        self.field_frame = FieldFrame(self.frame_main, "Criterio", criterios, "Valor", valores, habilitados)
-        self.field_frame.pack(pady=20)
+        self.field_registro = FieldFrame(self.frame_main, "Criterio", criterios, "Valor", valores, habilitados)
+        self.field_registro.pack(pady=10)
 
-        Button(self.frame_main, text="Completar Recepción", command=self.complete_recepcion).pack(pady=10)
+        self.label_feedback = Label(self.frame_main, text="", font=("Arial", 12), bg="white")
+        self.label_feedback.pack(pady=5)
 
-    def complete_recepcion(self):
-        """ Marks Recepción as completed and unlocks the rest """
-        self.recepcion_completed = True
-        messagebox.showinfo("Recepción Completada", "Recepción ha sido completada. Ahora puedes acceder a las demás funcionalidades.")
+        Button(self.frame_main, text="Registrar y Convertir Fichas", command=self.process_registration).pack(pady=5)
+
+    def process_registration(self):
+        """ Processes client registration and moves to welcome drink """
+        nombre = self.field_registro.obtener_valor_por_criterio("Nombre")
+        edad = self.field_registro.obtener_valor_por_criterio("Edad")
+        saldo = self.field_registro.obtener_valor_por_criterio("Saldo")
+        fichas = self.field_registro.obtener_valor_por_criterio("Cantidad a Convertir en Fichas")
+        fichasn = int(fichas) // 1000
+        cambio = fichas % 1000
+
+        if not nombre or not edad or not saldo or not fichas:
+            messagebox.showerror("Error", "Complete todos los campos.")
+            return
+        
+        if int(fichas)> int(saldo) or int(fichas) < 0:
+            messagebox.showerror("Error", "Cantidad de dinero no válida.")
+            return
+
+        edad, saldo, fichas = int(edad), float(saldo), float(fichas)
+
+        if self.usuarioActual is None:
+            self.usuarioActual = self.recepcionista.registrar_cliente(edad, saldo, self.field_identificacion.obtener_valor_por_criterio("ID Cliente"), nombre, self.parked_car)
+
+        if self.usuarioActual:
+            messagebox.showinfo("Registro Exitoso", f"{nombre}, has sido registrado. Has cambiado {fichas} pesos por {fichasn} fichas. Te sobraron {cambio} pesos")
+
+        self.recepcionista.cambiar_fichas(self.usuarioActual, fichas)
+        
+        self.give_welcome_drink()
+
+    # interaccion 3
+    def give_welcome_drink(self):
+        """ Assigns a welcome drink and completes registration """
+        for widget in self.frame_main.winfo_children():
+            widget.destroy()
+
+        Label(self.frame_main, text="Bebida de Bienvenida", font=("Arial", 14, "bold"), bg="white").pack(pady=10)
+
+        criterios = ["Bebida"]
+        valores = [""]
+        habilitados = [False]
+
+        self.field_bebida = FieldFrame(self.frame_main, "Criterio", criterios, "Valor", valores, habilitados)
+        self.field_bebida.pack(pady=10)
+
+        self.label_feedback = Label(self.frame_main, text="", font=("Arial", 12), bg="white")
+        self.label_feedback.pack(pady=5)
+
+        Button(self.frame_main, text="Recibir Bebida y Completar", command=self.complete_reception).pack(pady=5)
+
+
+
+    def complete_reception(self):
+        """ Completes reception and enables functionalities """
+        welcome_drinks = ["Mojito", "Piña Colada", "Martini", "Whisky Sour"]
+        drink = random.choice(welcome_drinks)
+
+        self.field_bebida.entries[0].config(state="normal")
+        self.field_bebida.valores_vars[0].set(drink)
+        self.field_bebida.entries[0].config(state="readonly")
+
+        messagebox.showinfo("Recepción Completa", f"Has recibido una {drink} de bienvenida. ¡Disfruta el casino!")
+
+        self.recepcion_completed = True  # Unlocks functionalities
 
     # 🔹 FUNCIONALIDAD 2: JUEGOS
     def func_juegos(self):
