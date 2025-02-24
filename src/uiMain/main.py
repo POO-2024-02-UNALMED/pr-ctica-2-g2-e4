@@ -32,8 +32,8 @@ def main():
     suscripcion = random.choice(SUSCRIPCIONES)
 
     cliente = Cliente(nombre, identificacion, suscripcion)
-    conserje = Conserje(nombre="Alfredo", id=4231)
-    bartender = Bartender(nombre="Luis", id=6432)
+    conserje = Conserje(puesto="Habitaciones", rol="Conserje")
+    bartender = Bartender(puesto="bar", rol="Bartender")
 
     print(cliente)
 
