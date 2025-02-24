@@ -2,9 +2,9 @@ import random
 from .inicio_sesion import InicioSesion
 from .menu_habitaciones import MenuHabitaciones
 from ..gestorAplicacion.Servicios.suscripcion import Suscripcion
-from ..gestorAplicacion.personal import Recepcionista
+from ..gestorAplicacion.personal.recepcionista import Recepcionista
 from ..gestorAplicacion.personal.cliente import Cliente
-from ..gestorAplicacion.personal import Conserje
+from ..gestorAplicacion.personal.conserje import Conserje
 from ..gestorAplicacion.personal.bartender import Bartender
 
 
@@ -32,8 +32,8 @@ def main():
     suscripcion = random.choice(SUSCRIPCIONES)
 
     cliente = Cliente(nombre, identificacion, suscripcion)
-    conserje = Conserje(nombre="Alfredo", id=4231)
-    bartender = Bartender(nombre="Luis", id=6432)
+    conserje = Conserje(puesto="Habitaciones", rol="Conserje")
+    bartender = Bartender(puesto="bar", rol="Bartender")
 
     print(cliente)
 

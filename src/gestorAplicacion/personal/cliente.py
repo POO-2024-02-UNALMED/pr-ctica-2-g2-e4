@@ -1,3 +1,4 @@
+from typing import List
 from ..Servicios.cuenta import Cuenta
 from ..Servicios.suscripcion import Suscripcion
 from ..Servicios.auto import Auto
@@ -6,7 +7,6 @@ from ..Servicios.RegistroJuego import RegistroJuego
 from ..Servicios.asiento import Asiento
 from ..Servicios.evento import Evento
 from .recepcionista import Recepcionista
-from typing import List
 
 
 class Cliente:
@@ -18,7 +18,8 @@ class Cliente:
         self.auto = auto
         self.fichas = 0
         self.numero_visitas = 0
-        self.suscripcion = suscripcion if suscripcion else Suscripcion(self.numero_visitas)
+        self.suscripcion = suscripcion if suscripcion else Suscripcion(
+            self.numero_visitas)
         self.fidelidad_bar = False
         self.propinas_bar = 0
         self.bebida_favorita = None
@@ -45,7 +46,8 @@ class Cliente:
             if self.saldo >= total_cuenta:
                 self.saldo -= total_cuenta
                 cuenta.set_pagada(True)
-                print(f"Cuenta pagada por el cliente {self.nombre_cliente} por un total de ${total_cuenta}")
+                print(
+                    f"Cuenta pagada por el cliente {self.nombre_cliente} por un total de ${total_cuenta}")
             else:
                 print("Saldo insuficiente para pagar la cuenta.")
 
@@ -155,7 +157,6 @@ class Cliente:
     def set_evento(self, evento: Evento):
         self.evento = evento
 
-
     """ def agregar_reserva(self, habitacion, noches):
         total = habitacion.precio_base * noches * \
             (1 - self.suscripcion.descuento)
@@ -177,5 +178,3 @@ class Cliente:
             self.cuenta_total = 0
         else:
             print("No hay saldo pendiente por pagar.") """
-
-    
