@@ -89,11 +89,13 @@ class Bartender(Empleado):
             return "Neutral"
         return "no recomendada"
 
-    def evaluar_bebida_favorita(self, cuentas: List[Cuenta]) -> Bebida:
-        descripciones = [
-            d for cuenta in cuentas for d in cuenta.get_descripciones()]
-        bebida_favorita_nombre = max(
-            set(descripciones), key=descripciones.count, default=None)
+    def evaluar_bebida_favorita(self, cuentas: List[Cuenta]):
+        descripciones = [d for cuenta in cuentas for d in cuenta.get_descripciones()]
+        bebida_favorita_nombre = max(set(descripciones), key=descripciones.count, default=None)
+
+        if bebida_favorita_nombre is None:
+            return None  # ✅ Si no hay bebida favorita, devolvemos None
+
         return self.buscar_bebida_en_barra(bebida_favorita_nombre)
 
     def buscar_bebida_en_barra(self, nombre_bebida: str) -> Bebida:

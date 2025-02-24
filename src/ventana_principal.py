@@ -7,10 +7,9 @@ from gestorAplicacion.personal.cliente import Cliente
 from gestorAplicacion.personal.recepcionista import Recepcionista
 from gestorAplicacion.personal.bartender import Bartender
 from gestorAplicacion.personal.valet import Valet
-
+from gestorAplicacion.Servicios.suscripcion import Suscripcion
 from gestorAplicacion.Servicios.bebida import Bebida
 from gestorAplicacion.Servicios.ingrediente import Ingrediente
-
 from gestorAplicacion.Servicios.auto import Auto
 from gestorAplicacion.Servicios.casino import Casino
 
@@ -58,6 +57,7 @@ class Ventana_Principal:
 
         #inicializacion de objetos
         self.inicializar_obj_bar()
+        self.inicializar_clientes()
         self.usuarioActual = None
 
     def show_welcome_screen(self):
@@ -106,7 +106,7 @@ class Ventana_Principal:
         id_cliente = self.field_identificacion.obtener_valor_por_criterio("ID Cliente")
         modelo = self.field_identificacion.obtener_valor_por_criterio("Modelo Auto")
         placa = self.field_identificacion.obtener_valor_por_criterio("Placa Auto")
-
+        
         if not id_cliente or not modelo or not placa:
             messagebox.showerror("Error", "Ingrese un ID, modelo de auto y placa válidos.")
             return
@@ -203,7 +203,7 @@ class Ventana_Principal:
         saldo = self.field_registro.obtener_valor_por_criterio("Saldo")
         fichas = self.field_registro.obtener_valor_por_criterio("Cantidad a Convertir en Fichas")
         fichasn = int(fichas) // 1000
-        cambio = fichas % 1000
+        cambio = int(fichas) % 1000
 
         if not nombre or not edad or not saldo or not fichas:
             messagebox.showerror("Error", "Complete todos los campos.")
@@ -227,38 +227,65 @@ class Ventana_Principal:
 
     # interaccion 3
     def give_welcome_drink(self):
-        """ Assigns a welcome drink and completes registration """
+        """ Handles the third interaction: Assigning the welcome drink """
         for widget in self.frame_main.winfo_children():
             widget.destroy()
 
-        Label(self.frame_main, text="Bebida de Bienvenida", font=("Arial", 14, "bold"), bg="white").pack(pady=10)
+        Label(self.frame_main, text="Recepción - Bebida de Bienvenida", font=("Arial", 14, "bold"), bg="white").pack(pady=10)
 
-        criterios = ["Bebida"]
+        # 🔹 Step 1: Determine the welcome drink for the current client
+        if not self.usuarioActual:
+            messagebox.showerror("Error", "No hay cliente registrado. Complete los pasos anteriores.")
+            return
+
+        self.welcome_drink = self.bartender.preparar_bebida_bienvenida(self.usuarioActual)
+
+        # 🔹 Step 2: Display the drink's description
+        bebida_info = str(self.welcome_drink)
+        self.label_drink_info = Label(self.frame_main, text=bebida_info, font=("Arial", 12), bg="white", justify="left")
+        self.label_drink_info.pack(pady=10)
+
+        # 🔹 Step 3: Ask for feedback using FieldFrame
+        criterios = ["Calificación (1 = Excelente, 2 = Normal, 3 = Mala)"]
         valores = [""]
-        habilitados = [False]
+        habilitados = [True]
 
-        self.field_bebida = FieldFrame(self.frame_main, "Criterio", criterios, "Valor", valores, habilitados)
-        self.field_bebida.pack(pady=10)
+        self.field_feedback = FieldFrame(self.frame_main, "Criterio", criterios, "Valor", valores, habilitados)
+        self.field_feedback.pack(pady=10)
 
-        self.label_feedback = Label(self.frame_main, text="", font=("Arial", 12), bg="white")
-        self.label_feedback.pack(pady=5)
+        # 🔹 Step 4: Button to submit feedback
+        Button(self.frame_main, text="Enviar Calificación", command=self.process_drink_feedback).pack(pady=10)
 
-        Button(self.frame_main, text="Recibir Bebida y Completar", command=self.complete_reception).pack(pady=5)
+    def process_drink_feedback(self):
+        """ Processes the rating given to the welcome drink and updates its popularity """
+        rating = self.field_feedback.obtener_valor_por_criterio("Calificación (1 = Excelente, 2 = Normal, 3 = Mala)")
+
+        if not rating.isdigit() or int(rating) not in [1, 2, 3]:
+            messagebox.showerror("Error", "Ingrese una calificación válida (1, 2 o 3).")
+            return
+
+        rating = int(rating)
+
+        # 🔹 Step 1: Adjust `favorito` attribute based on rating
+        if rating == 1:
+            self.welcome_drink.set_favorito(self.welcome_drink.get_favorito() + 1)
+        elif rating == 3:
+            self.welcome_drink.set_favorito(self.welcome_drink.get_favorito() - 1)
+
+        messagebox.showinfo("Calificación Guardada", "Gracias por su opinión. Disfrute su estadía en el casino.")
+
+        # 🔹 Step 2: Finalize the reception process
+        self.finalize_reception()
 
 
 
-    def complete_reception(self):
-        """ Completes reception and enables functionalities """
-        welcome_drinks = ["Mojito", "Piña Colada", "Martini", "Whisky Sour"]
-        drink = random.choice(welcome_drinks)
 
-        self.field_bebida.entries[0].config(state="normal")
-        self.field_bebida.valores_vars[0].set(drink)
-        self.field_bebida.entries[0].config(state="readonly")
+    def finalize_reception(self):
+        """ Marks the reception process as completed and unlocks functionalities """
+        self.recepcion_completed = True
+        messagebox.showinfo("Recepción Completa", "Recepción finalizada. Ahora puedes acceder a todas las funcionalidades.")
+        self.show_welcome_screen()
 
-        messagebox.showinfo("Recepción Completa", f"Has recibido una {drink} de bienvenida. ¡Disfruta el casino!")
-
-        self.recepcion_completed = True  # Unlocks functionalities
 
     # 🔹 FUNCIONALIDAD 2: JUEGOS
     def func_juegos(self):
@@ -351,9 +378,15 @@ class Ventana_Principal:
             Bebida("Martini", 12000, False, False, True, True, 5, [barra_ingredientes[10], barra_ingredientes[9], barra_ingredientes[6]])
         ]
     
-        bartender = Bartender("Bartender", "Barra")
+        self.bartender = Bartender("Bartender", "Barra")
         Bartender.set_barra_de_bebidas(barra_bebidas)
         Bartender.set_barra_de_ingredientes(barra_ingredientes)
+
+    def inicializar_clientes(self):
+        """ Inicializa clientes de prueba en el sistema """
+        Cliente("James",18, 45, 1000000, None, Suscripcion(6))  # Cliente Platinum
+        Cliente("Samanta",18, 37, 1000000, None, Suscripcion(4)).set_fidelidad_bar(True)  # Cliente Silver con fidelidad al bar
+        Cliente("Jose",18, 29, 1000000, None, Suscripcion(2))  # Cliente por defecto
 
 if __name__ == "__main__":
     root = tk.Tk()
