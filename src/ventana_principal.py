@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Menu, Frame, Label, Button, messagebox
+from tkinter import Menu, Frame, Label, Button, messagebox, Label, Entry, StringVar, OptionMenu
 import random 
 from fieldFrame import FieldFrame  # Importing FieldFrame for structured forms
 import ventana_inicio  # Importing Ventana_Inicio to allow navigation
@@ -13,6 +13,9 @@ from gestorAplicacion.Servicios.ingrediente import Ingrediente
 
 from gestorAplicacion.Servicios.auto import Auto
 from gestorAplicacion.Servicios.casino import Casino
+
+from gestorAplicacion.Servicios import evento, asiento
+from gestorAplicacion.Servicios.evento import Evento
 
 class Ventana_Principal:
     def __init__(self, root):
@@ -203,7 +206,7 @@ class Ventana_Principal:
         saldo = self.field_registro.obtener_valor_por_criterio("Saldo")
         fichas = self.field_registro.obtener_valor_por_criterio("Cantidad a Convertir en Fichas")
         fichasn = int(fichas) // 1000
-        cambio = fichas % 1000
+        cambio = int(fichas) % 1000
 
         if not nombre or not edad or not saldo or not fichas:
             messagebox.showerror("Error", "Complete todos los campos.")
@@ -305,20 +308,116 @@ class Ventana_Principal:
 
         Label(self.frame_main, text="Funcionalidad: Hotel", font=("Arial", 14, "bold"), bg="white").pack(pady=10)
 
+
+
+
+
+
+
+
     # 🔹 FUNCIONALIDAD 5: EVENTOS
     def func_eventos(self):
-        """ Handles Eventos functionality with restricted text boxes """
+        """Muestra la interfaz para gestionar eventos en el casino."""
         for widget in self.frame_main.winfo_children():
             widget.destroy()
 
-        criterios = ["Código", "Nombre", "Fecha"]
-        valores = ["", "", ""]
-        habilitados = [False, self.recepcion_completed, self.recepcion_completed]  
+        Label(self.frame_main, text="Ingrese su ID de cliente:", font=("Arial", 12), bg="white").pack(pady=5)
+        
+        self.entry_id = Entry(self.frame_main)
+        self.entry_id.pack(pady=5)
 
-        self.field_frame = FieldFrame(self.frame_main, "Criterio", criterios, "Valor", valores, habilitados)
-        self.field_frame.pack(pady=20)
+        Button(self.frame_main, text="Confirmar ID", command=self.verificar_cliente).pack(pady=5)
 
-        Label(self.frame_main, text="Funcionalidad: Eventos", font=("Arial", 14, "bold"), bg="white").pack(pady=10)
+    def verificar_cliente(self):
+        """Verifica si el cliente existe y muestra los eventos."""
+        id_cliente = self.entry_id.get()
+        self.cliente = Recepcionista.identificar_cliente(id_cliente)
+
+        if not self.cliente:
+            messagebox.showerror("Error", "No se encontró ningún registro para esta identificación.")
+            return
+        
+        # Mostrar información del cliente
+        for widget in self.frame_main.winfo_children():
+            widget.destroy()
+        
+        Label(self.frame_main, text=f"Hola {self.cliente.get_nombre_cliente()}!", font=("Arial", 14, "bold"), bg="white").pack(pady=5)
+        Label(self.frame_main, text=f"Suscripción: {self.cliente.get_suscripcion().get_tipo_suscripcion()}", font=("Arial", 12), bg="white").pack()
+        Label(self.frame_main, text=f"Saldo: {self.cliente.get_fichas()} fichas", font=("Arial", 12), bg="white").pack()
+
+        # Inicializar eventos
+        Evento.inicializar_eventos()
+        self.eventos_disponibles = Evento.mostrar_eventos() # Suponiendo que devuelve una lista de objetos
+
+        # Selección de eventos
+        self.evento_var = StringVar()
+        self.evento_var.set(self.eventos_disponibles[0].nombre)
+
+        Label(self.frame_main, text="Seleccione un evento:", font=("Arial", 12), bg="white").pack(pady=5)
+        OptionMenu(self.frame_main, self.evento_var, *[e.nombre for e in self.eventos_disponibles]).pack()
+
+        Button(self.frame_main, text="Seleccionar Evento", command=self.seleccionar_evento).pack(pady=5)
+
+    def seleccionar_evento(self):
+        """Obtiene el evento seleccionado y muestra el precio con descuento."""
+        nombre_evento = self.evento_var.get()
+        self.evento_seleccionado = next(e for e in self.eventos_disponibles if e.get_nombre() == nombre_evento)
+
+        descuento = self.cliente.get_suscripcion().get_descuento()
+        costo_original = self.evento_seleccionado.get_precio()
+        self.costo_final = int(costo_original * (1 - descuento))
+
+        for widget in self.frame_main.winfo_children():
+            widget.destroy()
+        
+        Label(self.frame_main, text=f"Evento seleccionado: {self.evento_seleccionado.get_nombre()}", font=("Arial", 12), bg="white").pack()
+        Label(self.frame_main, text=f"Precio original: {costo_original} fichas", font=("Arial", 12), bg="white").pack()
+        Label(self.frame_main, text=f"Precio con descuento: {self.costo_final} fichas", font=("Arial", 12, "bold"), bg="white").pack()
+
+        if self.cliente.get_fichas() < self.costo_final:
+            messagebox.showerror("Error", "No tiene suficientes fichas para comprar este evento.")
+            return
+
+        Button(self.frame_main, text="Confirmar compra", command=self.confirmar_compra).pack(pady=5)
+
+    def confirmar_compra(self):
+        """Resta fichas y selecciona asiento."""
+        self.cliente.set_fichas(self.cliente.get_fichas() - self.costo_final)
+        messagebox.showinfo("Éxito", f"Compra realizada con éxito. Nuevo saldo: {self.cliente.get_fichas()} fichas")
+
+        self.seleccionar_asiento()
+
+    def seleccionar_asiento(self):
+        """Permite al cliente elegir su asiento."""
+        for widget in self.frame_main.winfo_children():
+            widget.destroy()
+
+        zonas = {"PALCO": asiento.ZonaAsiento.PALCO, "BALCÓN": asiento.ZonaAsiento.BALCON,
+                 "CENTRO": asiento.ZonaAsiento.CENTRO, "ATRÁS": asiento.ZonaAsiento.ATRAS}
+
+        self.asiento_var = StringVar()
+        self.asiento_var.set("CENTRO")  
+
+        Label(self.frame_main, text="Seleccione una zona de asiento:", font=("Arial", 12), bg="white").pack(pady=5)
+        OptionMenu(self.frame_main, self.asiento_var, *zonas.keys()).pack()
+
+        Button(self.frame_main, text="Confirmar Asiento", command=lambda: self.confirmar_asiento(zonas)).pack(pady=5)
+
+    def confirmar_asiento(self, zonas):
+        """Confirma la selección de asiento y finaliza la reserva."""
+        zona_seleccionada = zonas[self.asiento_var.get()]
+        Recepcionista.procesar_seleccion_evento(self.cliente, self.evento_seleccionado, zona_seleccionada, self.costo_final)
+        messagebox.showinfo("Reserva Confirmada", f"Asiento en {self.asiento_var.get()} confirmado para {self.evento_seleccionado.get_nombre()}!")
+
+
+
+
+
+
+
+
+
+
 
     def show_app_info(self):
         """ Displays application information """

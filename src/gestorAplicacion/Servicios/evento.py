@@ -38,15 +38,12 @@ class Evento():
 
     @classmethod
     def mostrar_eventos(cls):
-        """Muestra los eventos disponibles."""
+        """Devuelve la lista de eventos disponibles."""
         if not cls.eventos_disponibles:
             print("No hay eventos disponibles en este momento")
-            return
-
-        for i, evento in enumerate(cls.eventos_disponibles, start=1):
-            nombre_artista = evento.artista.nombre if evento.artista else "Artista no disponible"
-            print(
-                f"{i}. {evento.nombre} - {evento.descripcion} | Artista: {nombre_artista} (${evento.precio})")
+            return []
+        
+        return cls.eventos_disponibles  # Devuelve la lista de eventos
 
     def mostrar_zonas_asientos(self):
         """Muestra las zonas de asientos disponibles en el evento."""
