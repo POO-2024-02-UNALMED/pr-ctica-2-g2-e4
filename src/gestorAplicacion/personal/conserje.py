@@ -1,7 +1,8 @@
-class Conserje:
-    def __init__(self, nombre, id):
-        self.nombre = nombre
-        self.id = id
+from ..personal.empleado import Empleado
+
+class Conserje(Empleado):
+    def __init__(self, rol, puesto):
+        super().__init__(rol, puesto)
 
     def get_rol(self):
         return "Conserje"

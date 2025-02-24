@@ -1,15 +1,21 @@
-from ..Servicios import Asiento, Auto, Evento, Suscripcion
-from ..personal import Cliente, Empleado
+from ..Servicios.asiento import Asiento
+from ..Servicios.asiento import ZonaAsiento
+from ..Servicios.auto import Auto
+from ..Servicios.evento import Evento
+from ..personal.empleado import Empleado
+from ..Servicios.suscripcion import Suscripcion
+
 from typing import List
 
 
 class Recepcionista(Empleado):
-    clientes: List[Cliente] = []
+    clientes = []
 
     def __init__(self, rol: str, puesto: str):
         super().__init__(rol, puesto)
 
-    def registrar_cliente(self, edad: int, saldo: float, identificacion: int, nombre: str, auto: Auto) -> Cliente:
+    def registrar_cliente(self, edad: int, saldo: float, identificacion: int, nombre: str, auto: Auto):
+        from gestorAplicacion.personal.cliente import Cliente
         numero_visitas = 1
 
         for cliente in Recepcionista.clientes:
@@ -33,25 +39,25 @@ class Recepcionista(Empleado):
     def generar_saludo(self, nombre: str, rol: str) -> str:
         return f"Hola, {nombre}, soy un {rol}."
 
-    def cambiar_fichas(self, cliente: Cliente, dinero: float):
+    def cambiar_fichas(self, cliente, dinero: float):
         fichas = int(dinero) // 1000
         cambio = dinero % 1000
         cliente.set_saldo(cliente.get_saldo() - dinero + cambio)
         cliente.set_fichas(cliente.get_fichas() + fichas)
 
     @staticmethod
-    def get_clientes() -> List[Cliente]:
+    def get_clientes():
         return Recepcionista.clientes
 
     @staticmethod
-    def identificar_cliente(identificacion: int) -> Cliente:
+    def identificar_cliente(identificacion: int):
         for cliente in Recepcionista.get_clientes():
             if cliente.get_id() == identificacion:
                 return cliente
         return None
 
     @staticmethod
-    def procesar_seleccion_evento(cliente: Cliente, evento_seleccionado: Evento, ubicacion: Asiento.ZonaAsiento, costo_con_descuento: int):
+    def procesar_seleccion_evento(cliente, evento_seleccionado: Evento, ubicacion: ZonaAsiento, costo_con_descuento: int):
         print("\n--Resumen de la reserva--\n")
         print(f"Ha seleccionado el evento: {evento_seleccionado.get_nombre()}")
         print(

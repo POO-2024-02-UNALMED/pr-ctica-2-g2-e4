@@ -1,5 +1,6 @@
 from .asiento import Asiento
-from ..personal import Artista
+from .asiento import ZonaAsiento
+from ..personal.artista import Artista
 
 
 class Evento():

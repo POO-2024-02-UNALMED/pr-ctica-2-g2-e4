@@ -1,5 +1,5 @@
-from ..Servicios import suscripcion
-from ..personal import Cliente
+from ..Servicios.suscripcion import Suscripcion
+
 
 
 class Empleado:
@@ -10,7 +10,8 @@ class Empleado:
         self.puesto = puesto
         Empleado.empleados.append(self)
 
-    def compensar_fichas(self, suscripcion: suscripcion, cliente: Cliente):
+    def compensar_fichas(self, suscripcion: Suscripcion, cliente):
+        from gestorAplicacion.personal.cliente import Cliente
         fichas_compensacion = suscripcion.get_ficha_compensacion()
         cliente.set_fichas(cliente.get_fichas() + fichas_compensacion)
 

@@ -1,9 +1,10 @@
-from ..personal import Cliente
+
 from typing import List, Optional
 
 
 class Auto:
-    def __init__(self, modelo: Optional[str] = None, placa: Optional[str] = None, cliente: Optional[Cliente] = None):
+    def __init__(self, modelo: Optional[str] = None, placa: Optional[str] = None, cliente = None):
+        from gestorAplicacion.personal.cliente import Cliente
         self.estacionado = False
         self.modelo = modelo
         self.placa = placa
@@ -31,10 +32,10 @@ class Auto:
     def set_placa(self, placa: str):
         self.placa = placa
 
-    def get_cliente(self) -> Optional[Cliente]:
+    def get_cliente(self):
         return self.cliente
 
-    def set_cliente(self, cliente: Cliente):
+    def set_cliente(self, cliente):
         self.cliente = cliente
 
     def get_espacio_estacionamiento(self) -> List[int]:

@@ -1,5 +1,7 @@
 from ..Servicios.auto import Auto
-from ..personal import Empleado, Recepcionista
+from ..personal.empleado import Empleado
+from ..personal.recepcionista import Recepcionista
+from ..Servicios.casino import Casino
 
 
 class Valet(Empleado):

@@ -1,7 +1,7 @@
 from ..Servicios import Bebida
 from ..Servicios import Cuenta
 from ..Servicios import Ingrediente
-from ..Servicios import Suscripcion
+from ..Servicios.suscripcion import Suscripcion
 from ..personal.empleado import Empleado
 from typing import List
 
@@ -22,7 +22,7 @@ class Bartender(Empleado):
         return f"Hola, {nombre}, soy un {rol}"
 
     def preparar_bebida_bienvenida(self, cliente):
-        bebida_base = self.evaluar_bebida_favorita(cliente.get_cuentas())
+        bebida_base = self.evaluar_bebida_favorita(cliente.cuentas)
         if not bebida_base:
             bebida_base = max(Bartender.barra_de_bebidas,
                               key=lambda b: b.get_favorito(), default=None)
