@@ -99,42 +99,17 @@ class Evento():
         return not self.consumo_minimo or monto >= 0.0
 
     # Getters y setters
-    @property
-    def nombre_evento(self):
+    def get_nombre(self):
         return self.nombre
-
-    @nombre_evento.setter
-    def nombre_evento(self, nombre):
-        self.nombre = nombre
-
-    @property
-    def precio_evento(self):
+    
+    def get_precio(self):
         return self.precio
 
-    @property
-    def descripcion_evento(self):
+    def get_descripcion(self):
         return self.descripcion
 
-    @property
-    def asientos_evento(self):
-        return self.asientos
-
-    @property
-    def artista_evento(self):
+    def get_artista(self):
         return self.artista
 
-    @artista_evento.setter
-    def artista_evento(self, artista):
-        self.artista = artista
-
-    @property
-    def consumo_minimo_evento(self):
-        return self.consumo_minimo
-
-    @consumo_minimo_evento.setter
-    def consumo_minimo_evento(self, consumo_minimo):
-        self.consumo_minimo = consumo_minimo
-
-    @asientos_evento.setter
-    def asientos_evento(self, asientos):
-        self.asientos = asientos
+    def get_asientos(self):
+        return self.asientos

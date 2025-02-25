@@ -322,7 +322,7 @@ class Ventana_Principal:
             widget.destroy()
 
         Label(self.frame_main, text="Ingrese su ID de cliente:", font=("Arial", 12), bg="white").pack(pady=5)
-        
+
         self.entry_id = Entry(self.frame_main)
         self.entry_id.pack(pady=5)
 
@@ -337,31 +337,40 @@ class Ventana_Principal:
             messagebox.showerror("Error", "No se encontró ningún registro para esta identificación.")
             return
         
-        # Mostrar información del cliente
+        # Limpiar pantalla
         for widget in self.frame_main.winfo_children():
             widget.destroy()
         
+        # Información del cliente
         Label(self.frame_main, text=f"Hola {self.cliente.get_nombre_cliente()}!", font=("Arial", 14, "bold"), bg="white").pack(pady=5)
         Label(self.frame_main, text=f"Suscripción: {self.cliente.get_suscripcion().get_tipo_suscripcion()}", font=("Arial", 12), bg="white").pack()
         Label(self.frame_main, text=f"Saldo: {self.cliente.get_fichas()} fichas", font=("Arial", 12), bg="white").pack()
 
         # Inicializar eventos
         Evento.inicializar_eventos()
-        self.eventos_disponibles = Evento.mostrar_eventos() # Suponiendo que devuelve una lista de objetos
+        self.eventos_disponibles = Evento.mostrar_eventos()  # Lista de objetos Evento
 
-        # Selección de eventos
+        # Crear un Frame con fondo gris para organizar la selección
+        frame_seleccion = tk.Frame(self.frame_main, bg="#d3d3d3", padx=10, pady=10)
+        frame_seleccion.pack(pady=10)
+
+        # Encabezados
+        Label(frame_seleccion, text="Criterio", font=("Arial", 10, "bold"), bg="#a0a0a0", width=15).grid(row=0, column=0, padx=5, pady=5)
+        Label(frame_seleccion, text="Valor", font=("Arial", 10, "bold"), bg="#a0a0a0", width=20).grid(row=0, column=1, padx=5, pady=5)
+
+        # Selección de Evento
+        Label(frame_seleccion, text="Seleccione un evento:", font=("Arial", 10), bg="#d3d3d3").grid(row=1, column=0, sticky="w", padx=5, pady=5)
         self.evento_var = StringVar()
         self.evento_var.set(self.eventos_disponibles[0].nombre)
+        OptionMenu(frame_seleccion, self.evento_var, *[e.nombre for e in self.eventos_disponibles]).grid(row=1, column=1, padx=5, pady=5)
 
-        Label(self.frame_main, text="Seleccione un evento:", font=("Arial", 12), bg="white").pack(pady=5)
-        OptionMenu(self.frame_main, self.evento_var, *[e.nombre for e in self.eventos_disponibles]).pack()
-
-        Button(self.frame_main, text="Seleccionar Evento", command=self.seleccionar_evento).pack(pady=5)
+        # Botón para confirmar evento y pasar a selección de asiento
+        Button(frame_seleccion, text="Seleccionar Evento", command=self.seleccionar_evento).grid(row=2, column=1, pady=10, sticky="e")
 
     def seleccionar_evento(self):
-        """Obtiene el evento seleccionado y muestra el precio con descuento."""
+        """Muestra el precio con descuento y permite seleccionar asiento."""
         nombre_evento = self.evento_var.get()
-        self.evento_seleccionado = next(e for e in self.eventos_disponibles if e.get_nombre() == nombre_evento)
+        self.evento_seleccionado = next(e for e in self.eventos_disponibles if e.nombre == nombre_evento)
 
         descuento = self.cliente.get_suscripcion().get_descuento()
         costo_original = self.evento_seleccionado.get_precio()
@@ -370,44 +379,59 @@ class Ventana_Principal:
         for widget in self.frame_main.winfo_children():
             widget.destroy()
         
-        Label(self.frame_main, text=f"Evento seleccionado: {self.evento_seleccionado.get_nombre()}", font=("Arial", 12), bg="white").pack()
-        Label(self.frame_main, text=f"Precio original: {costo_original} fichas", font=("Arial", 12), bg="white").pack()
-        Label(self.frame_main, text=f"Precio con descuento: {self.costo_final} fichas", font=("Arial", 12, "bold"), bg="white").pack()
+        frame_seleccion = tk.Frame(self.frame_main, bg="#d3d3d3", padx=10, pady=10)
+        frame_seleccion.pack(pady=10)
 
-        if self.cliente.get_fichas() < self.costo_final:
-            messagebox.showerror("Error", "No tiene suficientes fichas para comprar este evento.")
-            return
+        # Encabezados
+        Label(frame_seleccion, text="Criterio", font=("Arial", 10, "bold"), bg="#a0a0a0", width=15).grid(row=0, column=0, padx=5, pady=5)
+        Label(frame_seleccion, text="Valor", font=("Arial", 10, "bold"), bg="#a0a0a0", width=20).grid(row=0, column=1, padx=5, pady=5)
 
-        Button(self.frame_main, text="Confirmar compra", command=self.confirmar_compra).pack(pady=5)
+        # Evento Seleccionado
+        Label(frame_seleccion, text="Evento:", font=("Arial", 10), bg="#d3d3d3").grid(row=1, column=0, sticky="w", padx=5, pady=5)
+        Label(frame_seleccion, text=self.evento_seleccionado.get_nombre(), font=("Arial", 10), bg="#d3d3d3").grid(row=1, column=1, padx=5, pady=5)
 
-    def confirmar_compra(self):
-        """Resta fichas y selecciona asiento."""
-        self.cliente.set_fichas(self.cliente.get_fichas() - self.costo_final)
-        messagebox.showinfo("Éxito", f"Compra realizada con éxito. Nuevo saldo: {self.cliente.get_fichas()} fichas")
+        # Precio con Descuento
+        Label(frame_seleccion, text="Precio con descuento:", font=("Arial", 10), bg="#d3d3d3").grid(row=2, column=0, sticky="w", padx=5, pady=5)
+        Label(frame_seleccion, text=f"{self.costo_final} fichas", font=("Arial", 10, "bold"), bg="#d3d3d3").grid(row=2, column=1, padx=5, pady=5)
 
-        self.seleccionar_asiento()
-
-    def seleccionar_asiento(self):
-        """Permite al cliente elegir su asiento."""
-        for widget in self.frame_main.winfo_children():
-            widget.destroy()
-
+        # Selección de Asiento
         zonas = {"PALCO": asiento.ZonaAsiento.PALCO, "BALCÓN": asiento.ZonaAsiento.BALCON,
-                 "CENTRO": asiento.ZonaAsiento.CENTRO, "ATRÁS": asiento.ZonaAsiento.ATRAS}
+                "CENTRO": asiento.ZonaAsiento.CENTRO, "ATRÁS": asiento.ZonaAsiento.ATRAS}
 
+        Label(frame_seleccion, text="Zona de Asiento:", font=("Arial", 10), bg="#d3d3d3").grid(row=3, column=0, sticky="w", padx=5, pady=5)
         self.asiento_var = StringVar()
-        self.asiento_var.set("CENTRO")  
+        self.asiento_var.set("CENTRO")
+        OptionMenu(frame_seleccion, self.asiento_var, *zonas.keys()).grid(row=3, column=1, padx=5, pady=5)
 
-        Label(self.frame_main, text="Seleccione una zona de asiento:", font=("Arial", 12), bg="white").pack(pady=5)
-        OptionMenu(self.frame_main, self.asiento_var, *zonas.keys()).pack()
+        # Crear label para el resumen de la reserva
+        self.label_resumen = Label(frame_seleccion, text="", justify="left", font=("Arial", 10), bg="#d3d3d3")
+        self.label_resumen.grid(row=5, column=0, columnspan=2, pady=10)
 
-        Button(self.frame_main, text="Confirmar Asiento", command=lambda: self.confirmar_asiento(zonas)).pack(pady=5)
+        # Confirmar Compra y Asiento
+        Button(frame_seleccion, text="Confirmar Reserva", command=lambda: self.confirmar_asiento(zonas)).grid(row=4, column=1, pady=10, sticky="e")
 
     def confirmar_asiento(self, zonas):
         """Confirma la selección de asiento y finaliza la reserva."""
-        zona_seleccionada = zonas[self.asiento_var.get()]
-        Recepcionista.procesar_seleccion_evento(self.cliente, self.evento_seleccionado, zona_seleccionada, self.costo_final)
-        messagebox.showinfo("Reserva Confirmada", f"Asiento en {self.asiento_var.get()} confirmado para {self.evento_seleccionado.get_nombre()}!")
+        self.zona_seleccionada = zonas[self.asiento_var.get()]
+
+        if self.cliente.get_fichas() < self.costo_final:
+            messagebox.showerror("Error", "No tiene suficientes fichas para este evento.")
+            return
+
+        self.cliente.set_fichas(self.cliente.get_fichas() - self.costo_final)
+        
+        # Ahora pasamos `self.label_resumen` correctamente
+        Recepcionista.procesar_seleccion_evento(
+            self.cliente, 
+            self.evento_seleccionado, 
+            self.zona_seleccionada, 
+            self.costo_final, 
+            self.label_resumen  
+        )
+
+        messagebox.showinfo("Reserva Confirmada", f"Asiento en {self.asiento_var.get()} confirmado para {self.evento_seleccionado.get_nombre()}!\nNuevo saldo: {self.cliente.get_fichas()} fichas")
+
+
 
 
 
