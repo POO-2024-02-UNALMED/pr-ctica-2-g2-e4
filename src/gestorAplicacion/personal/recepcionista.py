@@ -56,16 +56,31 @@ class Recepcionista(Empleado):
                 return cliente
         return None
 
-    @staticmethod
-    def procesar_seleccion_evento(cliente, evento_seleccionado: Evento, ubicacion: ZonaAsiento, costo_con_descuento: int):
-        print("\n--Resumen de la reserva--\n")
-        print(f"Ha seleccionado el evento: {evento_seleccionado.get_nombre()}")
-        print(
-            f"Artista invitado: {evento_seleccionado.get_artista().get_nombre()}")
-        print(f"En la ubicación: {ubicacion}")
-        print(f"El precio del evento fue de {costo_con_descuento} fichas.")
-        print("Gracias por visitar el área de eventos. ¡Disfrute del espectáculo!")
+    @staticmethod            
+    def procesar_seleccion_evento(cliente, evento_seleccionado: Evento, ubicacion: ZonaAsiento, costo_con_descuento: int, label_resumen):
+        """Procesa la selección del evento y muestra el resumen en la interfaz."""
+        resumen = (
+            "Resumen de la reserva:\n"
+            f"Ha seleccionado el evento: {evento_seleccionado.get_nombre()}\n"
+            f"Artista invitado: {evento_seleccionado.get_artista().get_nombre()}\n"
+            f"En la ubicación: {ubicacion.name.capitalize()}\n"
+            f"El precio del evento fue de {costo_con_descuento} fichas.\n"
+            "Gracias por visitar el área de eventos. ¡Disfrute del espectáculo!"
+        )
 
-        if cliente.get_suscripcion().get_tipo_suscripcion().lower() == "platinum":
-            print(
-                "Como miembro Platinum, también recibirá una bebida especial durante el espectáculo.")
+        label_resumen.config(
+        text=resumen,
+        font=("Arial", 11), 
+        fg="black",             
+        bg="white",                 
+        justify="left",              
+        anchor="w",                
+        padx=10, pady=5              
+    )
+
+        # Actualizar el label con el resumen
+        label_resumen.config(text=resumen)
+
+        # Si el cliente es Platinum, añadir el mensaje extra
+        if cliente.suscripcion.tipo_suscripcion.lower() == "platinum":
+            label_resumen.config(text=label_resumen.cget("text") + "\nComo miembro Platinum, también recibirá una bebida especial durante el espectáculo.")
