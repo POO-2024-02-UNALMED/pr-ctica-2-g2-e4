@@ -38,15 +38,12 @@ class Evento():
 
     @classmethod
     def mostrar_eventos(cls):
-        """Muestra los eventos disponibles."""
+        """Devuelve la lista de eventos disponibles."""
         if not cls.eventos_disponibles:
             print("No hay eventos disponibles en este momento")
-            return
-
-        for i, evento in enumerate(cls.eventos_disponibles, start=1):
-            nombre_artista = evento.artista.nombre if evento.artista else "Artista no disponible"
-            print(
-                f"{i}. {evento.nombre} - {evento.descripcion} | Artista: {nombre_artista} (${evento.precio})")
+            return []
+        
+        return cls.eventos_disponibles  # Devuelve la lista de eventos
 
     def mostrar_zonas_asientos(self):
         """Muestra las zonas de asientos disponibles en el evento."""
@@ -102,42 +99,17 @@ class Evento():
         return not self.consumo_minimo or monto >= 0.0
 
     # Getters y setters
-    @property
-    def nombre_evento(self):
+    def get_nombre(self):
         return self.nombre
-
-    @nombre_evento.setter
-    def nombre_evento(self, nombre):
-        self.nombre = nombre
-
-    @property
-    def precio_evento(self):
+    
+    def get_precio(self):
         return self.precio
 
-    @property
-    def descripcion_evento(self):
+    def get_descripcion(self):
         return self.descripcion
 
-    @property
-    def asientos_evento(self):
-        return self.asientos
-
-    @property
-    def artista_evento(self):
+    def get_artista(self):
         return self.artista
 
-    @artista_evento.setter
-    def artista_evento(self, artista):
-        self.artista = artista
-
-    @property
-    def consumo_minimo_evento(self):
-        return self.consumo_minimo
-
-    @consumo_minimo_evento.setter
-    def consumo_minimo_evento(self, consumo_minimo):
-        self.consumo_minimo = consumo_minimo
-
-    @asientos_evento.setter
-    def asientos_evento(self, asientos):
-        self.asientos = asientos
+    def get_asientos(self):
+        return self.asientos
