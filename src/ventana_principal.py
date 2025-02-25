@@ -12,6 +12,8 @@ from gestorAplicacion.Servicios.bebida import Bebida
 from gestorAplicacion.Servicios.ingrediente import Ingrediente
 from gestorAplicacion.Servicios.auto import Auto
 from gestorAplicacion.Servicios.casino import Casino
+from gestorAplicacion.personal.empleado import Empleado
+from gestorAplicacion.Servicios.cuenta import Cuenta
 
 
 class Ventana_Principal:
@@ -84,7 +86,7 @@ class Ventana_Principal:
         Label(self.frame_main, text="Recepción - Identificación y Estacionamiento",
               font=("Arial", 14, "bold"), bg="white").pack(pady=10)
 
-        # 🔹 Step 1: Client ID, Car Model, and Plate
+        
         criterios = ["ID Cliente", "Modelo Auto", "Placa Auto"]
         valores = ["", "", ""]
         habilitados = [True, True, True]  # All fields editable
@@ -137,7 +139,6 @@ class Ventana_Principal:
                 text="No hay registros. Continuando con nuevo registro...")
             suscripcion_cliente = None
 
-        # 🔹 Step 2: Initialize and Show Parking Lot
         # Inicializa un estacionamiento de 5x5
         Casino.inicializar_estacionamiento(5, 5)
         estacionamiento_str = Casino.mostrar_espacios_estacionamiento(
@@ -351,7 +352,7 @@ class Ventana_Principal:
             "Recepción Completa", "Recepción finalizada. Ahora puedes acceder a todas las funcionalidades.")
         self.show_welcome_screen()
 
-    # 🔹 FUNCIONALIDAD 2: JUEGOS
+    # FUNCIONALIDAD 2: JUEGOS
     def func_juegos(self):
         """ Handles Juegos functionality with restricted text boxes until Recepción is completed """
         for widget in self.frame_main.winfo_children():
@@ -370,25 +371,141 @@ class Ventana_Principal:
         Label(self.frame_main, text="Funcionalidad: Juegos",
               font=("Arial", 14, "bold"), bg="white").pack(pady=10)
 
-    # 🔹 FUNCIONALIDAD 3: BAR
+    # FUNCIONALIDAD 3: BAR
     def func_bar(self):
-        """ Handles Bar functionality with restricted text boxes """
+        """ Inicia la funcionalidad del bar en la interfaz gráfica """
         for widget in self.frame_main.winfo_children():
             widget.destroy()
 
-        criterios = ["Código", "Nombre", "Ubicación"]
-        valores = ["", "", ""]
-        habilitados = [False, self.recepcion_completed,
-                       self.recepcion_completed]
+        Label(self.frame_main, text="Funcionalidad: Bar", font=("Arial", 14, "bold"), bg="white").pack(pady=10)
 
-        self.field_frame = FieldFrame(
-            self.frame_main, "Criterio", criterios, "Valor", valores, habilitados)
-        self.field_frame.pack(pady=20)
+        if not self.usuarioActual:
+            messagebox.showerror("Error", "Debe completar la recepción antes de acceder al bar.")
+            return
 
-        Label(self.frame_main, text="Funcionalidad: Bar", font=(
-            "Arial", 14, "bold"), bg="white").pack(pady=10)
+        self.bartender = next((e for e in Empleado.get_empleados() if e.get_rol() == "Bartender"), None)
+        if not self.bartender:
+            messagebox.showerror("Error", "No hay un bartender disponible.")
+            return
 
-    # 🔹 FUNCIONALIDAD 4: HOTEL
+        # Preguntas sobre preferencias de bebida
+        criterios = ["¿Quiere Alcohol?", "¿Quiere Dulce?", "¿Quiere Amargo?", "¿Quiere Ácido?"]
+        valores = ["No", "No", "No", "No"]  # Valores por defecto
+        habilitados = [True, True, True, True]
+
+        self.field_bar = FieldFrame(self.frame_main, "Preferencias", criterios, "Respuesta", valores, habilitados)
+        self.field_bar.pack(pady=10)
+
+        Button(self.frame_main, text="Generar Menú", command=self.generar_menu_bar).pack(pady=10)
+
+    def generar_menu_bar(self):
+        """ Genera el menú de bebidas basado en las preferencias del usuario """
+        preferencias = [
+            self.field_bar.obtener_valor_por_criterio(c) == "Sí" 
+            for c in ["¿Quiere Alcohol?", "¿Quiere Dulce?", "¿Quiere Amargo?", "¿Quiere Ácido?"]
+        ]
+
+        # Genera el menú desde bartender
+        menu = self.bartender.generar_menu(
+            *preferencias, 
+            self.usuarioActual.get_bebida_favorita(), 
+            self.usuarioActual.get_suscripcion()
+        )
+
+        # Limpia el frame antes de mostrar el nuevo menú
+        for widget in self.frame_main.winfo_children():
+            widget.destroy()
+
+        # Muestra el menú generado (el string) en un Label
+        Label(
+            self.frame_main, 
+            text="Menú de Bebidas Disponibles:", 
+            font=("Arial", 12, "bold"), 
+            bg="white"
+        ).pack(pady=10)
+
+        Label(
+            self.frame_main, 
+            text=menu, 
+            font=("Courier New", 10), 
+            bg="white", 
+            justify="left"
+        ).pack(pady=10)
+
+        Label(
+            self.frame_main, 
+            text="Seleccione su bebida:", 
+            font=("Arial", 12), 
+            bg="white"
+        ).pack(pady=10)
+
+        # Selección centrada de bebidas usando radio buttons
+        opciones = self.bartender.get_menu_actual()
+        self.bebida_seleccionada = tk.StringVar(value=opciones[0].get_nombre() if opciones else "")
+
+        radio_frame = Frame(self.frame_main, bg="white")
+        radio_frame.pack(pady=10)
+
+        for bebida in opciones:
+            radio = tk.Radiobutton(
+                radio_frame, 
+                text=bebida.get_nombre(), 
+                variable=self.bebida_seleccionada, 
+                value=bebida.get_nombre(), 
+                bg="white"
+            )
+            radio.pack(anchor="w", padx=20)
+
+        # Botón para preparar bebida
+        Button(
+            self.frame_main, 
+            text="Pedir Bebida", 
+            command=self.preparar_bebida
+        ).pack(pady=10)
+
+    def preparar_bebida(self):
+        """ Prepara la bebida seleccionada y muestra sus ingredientes """
+        bebida_nombre = self.bebida_seleccionada.get()
+        
+        self.bebida_preparada = self.bartender.preparar_bebida(bebida_nombre, self.usuarioActual.get_suscripcion())
+
+        for widget in self.frame_main.winfo_children():
+            widget.destroy()
+
+        Label(self.frame_main, text=f"Bebida Preparada: {self.bebida_preparada.get_nombre()}", font=("Arial", 12), bg="white").pack(pady=10)
+        Label(self.frame_main, text=str(self.bebida_preparada), font=("Arial", 10), bg="white", justify="left").pack(pady=5)
+
+        Button(self.frame_main, text="Dejar Propina", command=self.pedir_propina).pack(pady=10)
+
+    def pedir_propina(self):
+        """ Pide propina al usuario y genera la factura """
+        for widget in self.frame_main.winfo_children():
+            widget.destroy()
+
+        criterios = ["Propina (COP)"]
+        valores = ["0"]
+        habilitados = [True]
+
+        self.field_propina = FieldFrame(self.frame_main, "Criterio", criterios, "Valor", valores, habilitados)
+        self.field_propina.pack(pady=10)
+
+        Button(self.frame_main, text="Generar Factura", command=self.generar_factura_bar).pack(pady=10)
+
+    def generar_factura_bar(self):
+        """ Genera y muestra la factura del bar """
+        propina = float(self.field_propina.obtener_valor_por_criterio("Propina (COP)"))
+
+        factura = Cuenta().generar_factura_bar(self.bebida_preparada, self.usuarioActual, propina, self.bartender)
+
+        for widget in self.frame_main.winfo_children():
+            widget.destroy()
+
+        Label(self.frame_main, text="Factura del Bar", font=("Arial", 14, "bold"), bg="white").pack(pady=10)
+        Label(self.frame_main, text=factura, font=("Arial", 10), bg="white", justify="left").pack(pady=10)
+
+        Button(self.frame_main, text="Finalizar", command=self.show_welcome_screen).pack(pady=10)
+
+    # FUNCIONALIDAD 4: HOTEL
     def func_hotel(self):
         """ Handles Hotel functionality with restricted text boxes """
         for widget in self.frame_main.winfo_children():
@@ -406,7 +523,7 @@ class Ventana_Principal:
         Label(self.frame_main, text="Funcionalidad: Hotel", font=(
             "Arial", 14, "bold"), bg="white").pack(pady=10)
 
-    # 🔹 FUNCIONALIDAD 5: EVENTOS
+    # FUNCIONALIDAD 5: EVENTOS
     def func_eventos(self):
         """ Handles Eventos functionality with restricted text boxes """
         for widget in self.frame_main.winfo_children():

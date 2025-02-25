@@ -147,7 +147,7 @@ class Ventana_Inicio:
             img_path = self.image_paths[self.current_image_index]
             print(img_path)
             img = Image.open(img_path)
-            img = img.resize((150, 150))
+            img = img.resize((200, 200))
             self.photo = ImageTk.PhotoImage(img)
             self.image_label.config(image=self.photo)
             self.image_label.image = self.photo
