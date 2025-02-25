@@ -2,12 +2,12 @@ class Suscripcion:
     def __init__(self, visitas: int = None, vetado: str = None):
         if visitas is not None:
             if visitas == 1:
-                self.tipo_suscripcion = "primera vez"
+                self.tipo_suscripcion = "Primera vez"
                 self.descuento = 0.05
                 self.ficha_compensacion = 20
                 self.calidad_ingredientes = "media"
             elif 1 < visitas < 4:
-                self.tipo_suscripcion = "por defecto"
+                self.tipo_suscripcion = "Por defecto"
                 self.descuento = 0.0
                 self.ficha_compensacion = 10
                 self.calidad_ingredientes = "baja"

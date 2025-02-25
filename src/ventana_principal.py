@@ -321,7 +321,7 @@ class Ventana_Principal:
         for widget in self.frame_main.winfo_children():
             widget.destroy()
 
-        Label(self.frame_main, text="Ingrese su ID de cliente:", font=("Arial", 12), bg="white").pack(pady=5)
+        Label(self.frame_main, text="Bienvenido, ingrese su ID de cliente nuevamente:", font=("Arial", 12), bg="white").pack(pady=5)
 
         self.entry_id = Entry(self.frame_main)
         self.entry_id.pack(pady=5)
@@ -334,81 +334,163 @@ class Ventana_Principal:
         self.cliente = Recepcionista.identificar_cliente(id_cliente)
 
         if not self.cliente:
-            messagebox.showerror("Error", "No se encontró ningún registro para esta identificación.")
+            messagebox.showerror("Error", "No se encontró ningún registro para esta identificación, por favor diríjase a recepción.")
             return
-        
-        # Limpiar pantalla
+
+        # Limpiar la interfaz
         for widget in self.frame_main.winfo_children():
             widget.destroy()
-        
-        # Información del cliente
-        Label(self.frame_main, text=f"Hola {self.cliente.get_nombre_cliente()}!", font=("Arial", 14, "bold"), bg="white").pack(pady=5)
-        Label(self.frame_main, text=f"Suscripción: {self.cliente.get_suscripcion().get_tipo_suscripcion()}", font=("Arial", 12), bg="white").pack()
-        Label(self.frame_main, text=f"Saldo: {self.cliente.get_fichas()} fichas", font=("Arial", 12), bg="white").pack()
+
+        # Agregar encabezados del proceso o consulta
+        Label(self.frame_main, text="¡Bienvenido a la selección de eventos de Diamond Casino!", font=("Arial", 12, "bold"), bg="white").pack(pady=5)
+        Label(self.frame_main, text="Aquí podrás elegir entre una variedad de eventos que el casino ofrece para ti.", font=("Arial", 10), bg="white").pack(pady=5)
+
+        # Crear un Frame para el recuadro de información del cliente
+        frame_info = Frame(self.frame_main, bg="lightgray", padx=10, pady=10, relief="raised", borderwidth=2)
+        frame_info.pack(pady=10)
+
+        #  Encabezados "Criterio" y "Valor"
+        Label(frame_info, text="Criterio", font=("Arial", 10, "bold"), bg="gray", fg="white", width=15).grid(row=0, column=0, padx=5, pady=5)
+        Label(frame_info, text="Valor", font=("Arial", 10, "bold"), bg="gray", fg="white", width=15).grid(row=0, column=1, padx=5, pady=5)
+
+        #  Información del cliente dentro del recuadro
+        Label(frame_info, text="Nombre:", font=("Arial", 10), bg="lightgray").grid(row=1, column=0, sticky="w", padx=5, pady=2)
+        Label(frame_info, text=self.cliente.get_nombre_cliente(), font=("Arial", 10), bg="lightgray").grid(row=1, column=1, sticky="w", padx=5, pady=2)
+
+        Label(frame_info, text="Suscripción:", font=("Arial", 10), bg="lightgray").grid(row=2, column=0, sticky="w", padx=5, pady=2)
+        Label(frame_info, text=self.cliente.get_suscripcion().get_tipo_suscripcion(), font=("Arial", 10), bg="lightgray").grid(row=2, column=1, sticky="w", padx=5, pady=2)
+
+        Label(frame_info, text="Saldo:", font=("Arial", 10), bg="lightgray").grid(row=3, column=0, sticky="w", padx=5, pady=2)
+        Label(frame_info, text=f"{self.cliente.get_fichas()} fichas", font=("Arial", 10), bg="lightgray").grid(row=3, column=1, sticky="w", padx=5, pady=2)
 
         # Inicializar eventos
         Evento.inicializar_eventos()
-        self.eventos_disponibles = Evento.mostrar_eventos()  # Lista de objetos Evento
+        self.eventos_disponibles = Evento.mostrar_eventos()  # Suponiendo que devuelve una lista de objetos
 
-        # Crear un Frame con fondo gris para organizar la selección
-        frame_seleccion = tk.Frame(self.frame_main, bg="#d3d3d3", padx=10, pady=10)
-        frame_seleccion.pack(pady=10)
+        # Crear otro Frame para la selección de eventos
+        frame_seleccion = Frame(frame_info, bg="lightgray")
+        frame_seleccion.grid(row=4, column=0, columnspan=2, pady=10)
 
-        # Encabezados
-        Label(frame_seleccion, text="Criterio", font=("Arial", 10, "bold"), bg="#a0a0a0", width=15).grid(row=0, column=0, padx=5, pady=5)
-        Label(frame_seleccion, text="Valor", font=("Arial", 10, "bold"), bg="#a0a0a0", width=20).grid(row=0, column=1, padx=5, pady=5)
+        Label(frame_seleccion, text="Seleccione un evento:", font=("Arial", 10), bg="lightgray").grid(row=0, column=0, sticky="w", padx=5, pady=5)
 
-        # Selección de Evento
-        Label(frame_seleccion, text="Seleccione un evento:", font=("Arial", 10), bg="#d3d3d3").grid(row=1, column=0, sticky="w", padx=5, pady=5)
         self.evento_var = StringVar()
         self.evento_var.set(self.eventos_disponibles[0].nombre)
-        OptionMenu(frame_seleccion, self.evento_var, *[e.nombre for e in self.eventos_disponibles]).grid(row=1, column=1, padx=5, pady=5)
 
-        # Botón para confirmar evento y pasar a selección de asiento
-        Button(frame_seleccion, text="Seleccionar Evento", command=self.seleccionar_evento).grid(row=2, column=1, pady=10, sticky="e")
+        OptionMenu(frame_seleccion, self.evento_var, *[e.nombre for e in self.eventos_disponibles]).grid(row=0, column=1, padx=5, pady=5)
+
+        Button(frame_seleccion, text="Seleccionar Evento", command=self.seleccionar_evento).grid(row=1, column=1, pady=10, sticky="e")
+
+
+    def mostrar_seleccion_evento(self):
+        """Muestra la lista de eventos disponibles sin pedir la ID de nuevo."""
+        for widget in self.frame_main.winfo_children():
+            widget.destroy()
+
+        # Encabezados
+        Label(self.frame_main, text="¡Bienvenido a la selección de eventos de Diamond Casino!", font=("Arial", 12, "bold"), bg="white").pack(pady=5)
+        Label(self.frame_main, text="Aquí podrás elegir entre una variedad de eventos que el casino ofrece para ti.", font=("Arial", 10), bg="white").pack(pady=5)
+
+        # Frame para información del cliente
+        frame_info = Frame(self.frame_main, bg="lightgray", padx=10, pady=10, relief="raised", borderwidth=2)
+        frame_info.pack(pady=10)
+
+        # Encabezados "Criterio" y "Valor"
+        Label(frame_info, text="Criterio", font=("Arial", 10, "bold"), bg="gray", fg="white", width=15).grid(row=0, column=0, padx=5, pady=5)
+        Label(frame_info, text="Valor", font=("Arial", 10, "bold"), bg="gray", fg="white", width=15).grid(row=0, column=1, padx=5, pady=5)
+
+        # Información del cliente dentro del recuadro
+        Label(frame_info, text="Nombre:", font=("Arial", 10), bg="lightgray").grid(row=1, column=0, sticky="w", padx=5, pady=2)
+        Label(frame_info, text=self.cliente.get_nombre_cliente(), font=("Arial", 10), bg="lightgray").grid(row=1, column=1, sticky="w", padx=5, pady=2)
+
+        Label(frame_info, text="Suscripción:", font=("Arial", 10), bg="lightgray").grid(row=2, column=0, sticky="w", padx=5, pady=2)
+        Label(frame_info, text=self.cliente.get_suscripcion().get_tipo_suscripcion(), font=("Arial", 10), bg="lightgray").grid(row=2, column=1, sticky="w", padx=5, pady=2)
+
+        Label(frame_info, text="Saldo:", font=("Arial", 10), bg="lightgray").grid(row=3, column=0, sticky="w", padx=5, pady=2)
+        Label(frame_info, text=f"{self.cliente.get_fichas()} fichas", font=("Arial", 10), bg="lightgray").grid(row=3, column=1, sticky="w", padx=5, pady=2)
+
+        # Frame para selección de eventos
+        frame_seleccion = Frame(frame_info, bg="lightgray")
+        frame_seleccion.grid(row=4, column=0, columnspan=2, pady=10)
+
+        Label(frame_seleccion, text="Seleccione un evento:", font=("Arial", 10), bg="lightgray").grid(row=0, column=0, sticky="w", padx=5, pady=5)
+
+        opciones_eventos = ["Seleccionar evento"] + [e.nombre for e in self.eventos_disponibles]
+        
+        self.evento_var = StringVar()
+        self.evento_var.set(opciones_eventos[0])  # Selecciona la opción por defecto
+
+        OptionMenu(frame_seleccion, self.evento_var, *opciones_eventos).grid(row=0, column=1, padx=5, pady=5)
+
+        Button(frame_seleccion, text="Seleccionar Evento", command=self.seleccionar_evento).grid(row=1, column=1, pady=10, sticky="e")
 
     def seleccionar_evento(self):
         """Muestra el precio con descuento y permite seleccionar asiento."""
+        
+        # 🔹 Asegurar que la opción por defecto sea "Seleccionar evento" si es la primera vez que se accede
+        if not hasattr(self, 'evento_var') or not self.evento_var.get():
+            self.evento_var = StringVar()
+            self.evento_var.set("Seleccionar evento")
+
         nombre_evento = self.evento_var.get()
+
+        # Validación: Evitar continuar si no se ha seleccionado un evento real
+        if nombre_evento == "Seleccionar evento":
+            messagebox.showwarning("Selección inválida", "Por favor, seleccione un evento antes de continuar.")
+            return
+
+        # Buscar el evento seleccionado
         self.evento_seleccionado = next(e for e in self.eventos_disponibles if e.nombre == nombre_evento)
 
         descuento = self.cliente.get_suscripcion().get_descuento()
         costo_original = self.evento_seleccionado.get_precio()
         self.costo_final = int(costo_original * (1 - descuento))
 
+        # Eliminar todos los widgets del frame principal
         for widget in self.frame_main.winfo_children():
             widget.destroy()
         
-        frame_seleccion = tk.Frame(self.frame_main, bg="#d3d3d3", padx=10, pady=10)
-        frame_seleccion.pack(pady=10)
+        # Crear nuevo frame para la selección de asiento
+        self.frame_evento = tk.Frame(self.frame_main, bg="#d3d3d3", padx=10, pady=10)
+        self.frame_evento.pack(pady=10)
 
         # Encabezados
-        Label(frame_seleccion, text="Criterio", font=("Arial", 10, "bold"), bg="#a0a0a0", width=15).grid(row=0, column=0, padx=5, pady=5)
-        Label(frame_seleccion, text="Valor", font=("Arial", 10, "bold"), bg="#a0a0a0", width=20).grid(row=0, column=1, padx=5, pady=5)
+        Label(self.frame_evento, text="Criterio", font=("Arial", 10, "bold"), bg="#a0a0a0", width=15).grid(row=0, column=0, padx=5, pady=5)
+        Label(self.frame_evento, text="Valor", font=("Arial", 10, "bold"), bg="#a0a0a0", width=20).grid(row=0, column=1, padx=5, pady=5)
 
         # Evento Seleccionado
-        Label(frame_seleccion, text="Evento:", font=("Arial", 10), bg="#d3d3d3").grid(row=1, column=0, sticky="w", padx=5, pady=5)
-        Label(frame_seleccion, text=self.evento_seleccionado.get_nombre(), font=("Arial", 10), bg="#d3d3d3").grid(row=1, column=1, padx=5, pady=5)
+        Label(self.frame_evento, text="Evento:", font=("Arial", 10), bg="#d3d3d3").grid(row=1, column=0, sticky="w", padx=5, pady=5)
+        Label(self.frame_evento, text=self.evento_seleccionado.get_nombre(), font=("Arial", 10), bg="#d3d3d3").grid(row=1, column=1, padx=5, pady=5)
 
         # Precio con Descuento
-        Label(frame_seleccion, text="Precio con descuento:", font=("Arial", 10), bg="#d3d3d3").grid(row=2, column=0, sticky="w", padx=5, pady=5)
-        Label(frame_seleccion, text=f"{self.costo_final} fichas", font=("Arial", 10, "bold"), bg="#d3d3d3").grid(row=2, column=1, padx=5, pady=5)
+        Label(self.frame_evento, text="Precio con descuento:", font=("Arial", 10), bg="#d3d3d3").grid(row=2, column=0, sticky="w", padx=5, pady=5)
+        Label(self.frame_evento, text=f"{self.costo_final} fichas", font=("Arial", 10, "bold"), bg="#d3d3d3").grid(row=2, column=1, padx=5, pady=5)
 
         # Selección de Asiento
         zonas = {"PALCO": asiento.ZonaAsiento.PALCO, "BALCÓN": asiento.ZonaAsiento.BALCON,
                 "CENTRO": asiento.ZonaAsiento.CENTRO, "ATRÁS": asiento.ZonaAsiento.ATRAS}
 
-        Label(frame_seleccion, text="Zona de Asiento:", font=("Arial", 10), bg="#d3d3d3").grid(row=3, column=0, sticky="w", padx=5, pady=5)
+        Label(self.frame_evento, text="Zona de Asiento:", font=("Arial", 10), bg="#d3d3d3").grid(row=3, column=0, sticky="w", padx=5, pady=5)
         self.asiento_var = StringVar()
         self.asiento_var.set("CENTRO")
-        OptionMenu(frame_seleccion, self.asiento_var, *zonas.keys()).grid(row=3, column=1, padx=5, pady=5)
+        OptionMenu(self.frame_evento, self.asiento_var, *zonas.keys()).grid(row=3, column=1, padx=5, pady=5)
 
         # Crear label para el resumen de la reserva
-        self.label_resumen = Label(frame_seleccion, text="", justify="left", font=("Arial", 10), bg="#d3d3d3")
+        self.label_resumen = Label(self.frame_evento, text="", justify="left", font=("Arial", 10), bg="#d3d3d3")
         self.label_resumen.grid(row=5, column=0, columnspan=2, pady=10)
 
-        # Confirmar Compra y Asiento
-        Button(frame_seleccion, text="Confirmar Reserva", command=lambda: self.confirmar_asiento(zonas)).grid(row=4, column=1, pady=10, sticky="e")
+        # Botón Confirmar Reserva
+        Button(self.frame_evento, text="Confirmar Reserva", command=lambda: self.confirmar_asiento(zonas)).grid(row=4, column=1, pady=10, sticky="e")
+
+        # Botón para regresar a la selección de eventos
+        Button(self.frame_evento, text="Regresar", command=self.regresar_a_seleccion).grid(row=6, column=1, pady=5, sticky="e")
+
+
+    def regresar_a_seleccion(self):
+        """Regresa a la selección de eventos sin pedir la ID de nuevo."""
+        self.frame_evento.destroy() 
+        
+        # Volver a mostrar la selección de eventos
+        self.mostrar_seleccion_evento()
 
     def confirmar_asiento(self, zonas):
         """Confirma la selección de asiento y finaliza la reserva."""
@@ -420,7 +502,7 @@ class Ventana_Principal:
 
         self.cliente.set_fichas(self.cliente.get_fichas() - self.costo_final)
         
-        # Ahora pasamos `self.label_resumen` correctamente
+
         Recepcionista.procesar_seleccion_evento(
             self.cliente, 
             self.evento_seleccionado, 
